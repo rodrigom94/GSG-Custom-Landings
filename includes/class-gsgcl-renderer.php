@@ -373,8 +373,8 @@ class GSGCL_Renderer
                             <div>
                                 <h3><?php echo esc_html__('Tus datos (estudiante GSG)', 'gsg-custom-landings'); ?></h3>
                                 <div class="gsgcl-field-grid">
-                                    <label><span><?php echo esc_html__('Tu nombre completo', 'gsg-custom-landings'); ?></span><input type="text" name="student_name" required /></label>
-                                    <label><span><?php echo esc_html__('Tu email registrado en GSG', 'gsg-custom-landings'); ?></span><input type="email" name="student_email" required /></label>
+                                    <label class="gsgcl-field-grid__full"><span><?php echo esc_html__('Tu nombre completo', 'gsg-custom-landings'); ?></span><input type="text" name="student_name" required /></label>
+                                    <label class="gsgcl-field-grid__full"><span><?php echo esc_html__('Tu email registrado en GSG', 'gsg-custom-landings'); ?></span><input type="email" name="student_email" required /></label>
                                     <label class="gsgcl-field-grid__full"><span><?php echo esc_html__('Comentario opcional', 'gsg-custom-landings'); ?></span><textarea name="student_comments" rows="4" placeholder="<?php echo esc_attr__('¿Algo que debamos saber?', 'gsg-custom-landings'); ?>"></textarea></label>
                                 </div>
                             </div>
