@@ -32,7 +32,7 @@ html {
     --gsgcl-shadow: 0 24px 70px rgba(16, 61, 146, 0.16);
 
     /* ── Design-system typography tokens ─────────────────── */
-    --gsgcl-fs-h1: clamp(2rem, 4.5vw, 2.5rem);
+    --gsgcl-fs-h1: clamp(2rem, 4.5vw, 2.9rem);
     --gsgcl-fw-h1: 600;
     --gsgcl-lh-h1: 1.1;
     --gsgcl-fs-h2: clamp(1.5rem, 3.5vw, 2rem);
@@ -148,7 +148,6 @@ html {
     font-size: var(--gsgcl-fs-h1);
     font-weight: var(--gsgcl-fw-h1);
     line-height: var(--gsgcl-lh-h1);
-    letter-spacing: -0.02em;
 }
 
 .gsgcl-hero__title span {
@@ -315,7 +314,7 @@ html {
     overflow: hidden;
 }
 
-.gsgcl-benefit::after {
+.gsgcl-benefit--counter-only::after {
     content: "";
     position: absolute;
     right: -10%;
@@ -340,11 +339,11 @@ html {
 }
 
 .gsgcl-benefit--counter-only {
-    padding-bottom: 10px;
+    padding-bottom: 0;
 }
 
 .gsgcl-benefit--cards-only {
-    padding-top: 8px;
+    padding-top: 0;
 }
 
 .gsgcl-dynamic-preview {
@@ -417,9 +416,8 @@ html {
     padding: 20px 44px;
     background: linear-gradient(135deg, var(--gsgcl-blue), var(--gsgcl-blue-deep));
     color: #fff;
-    font-weight: 900;
+    font-weight: 700;
     font-size: clamp(2.8rem, 6vw, 4.2rem);
-    letter-spacing: -0.04em;
     border-radius: 16px;
 }
 
@@ -427,6 +425,7 @@ html {
     margin: 0;
     color: var(--gsgcl-blue);
     font-size: 1.45rem;
+    font-weight: 700;
 }
 
 .gsgcl-section-header p {
@@ -497,7 +496,9 @@ html {
 .gsgcl-reasons h2,
 .gsgcl-help-card h3 {
     margin: 0;
+    margin-bottom: 7px;
     color: var(--gsgcl-gray-dark);
+    font-weight: 700;
 }
 
 .gsgcl-card p,
@@ -562,6 +563,8 @@ html {
 
 .gsgcl-form-card__header h2 {
     margin: 0;
+    margin-bottom: 7px;
+    font-weight: 700;
 }
 
 .gsgcl-form {
