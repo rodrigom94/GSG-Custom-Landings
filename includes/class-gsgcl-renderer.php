@@ -64,143 +64,8 @@ class GSGCL_Renderer
             $this->render_landing_from_sections($landing_id, $page_id, $config, $notice_type, $notice_message);
             return;
         }
-        ?>
-        <div class="gsgcl-shell gsgcl-variant-<?php echo esc_attr($config['layout_variant']); ?>">
-            <section class="gsgcl-hero">
-                <div class="gsgcl-wrap gsgcl-hero__grid">
-                    <div class="gsgcl-hero__content">
-                        <p class="gsgcl-kicker"><?php echo esc_html(ucfirst($config['content_type'])); ?></p>
-                        <h1 class="gsgcl-hero__title">
-                            <?php echo esc_html($config['hero_title']); ?>
-                            <span><?php echo esc_html($config['hero_highlight']); ?></span>
-                        </h1>
-                        <p class="gsgcl-hero__description"><?php echo esc_html($config['hero_description']); ?></p>
-                        <div class="gsgcl-hero__actions">
-                            <a class="gsgcl-button gsgcl-button--accent" href="<?php echo esc_url($config['primary_cta_url']); ?>"><?php echo esc_html($config['primary_cta_label']); ?></a>
-                            <a class="gsgcl-button gsgcl-button--ghost" href="<?php echo esc_url($config['secondary_cta_url']); ?>"><?php echo esc_html($config['secondary_cta_label']); ?></a>
-                        </div>
-                    </div>
-                    <div class="gsgcl-hero__visual">
-                        <div class="gsgcl-hero__image" style="background-image:url('<?php echo esc_url($config['hero_image_url']); ?>');"></div>
-                        <div class="gsgcl-badge gsgcl-badge--primary"><?php echo esc_html($config['hero_badge_primary']); ?></div>
-                        <div class="gsgcl-badge gsgcl-badge--secondary"><?php echo esc_html($config['hero_badge_secondary']); ?></div>
-                    </div>
-                </div>
-            </section>
 
-            <section id="gsgcl-benefit" class="gsgcl-benefit">
-                <div class="gsgcl-wrap">
-                    <header class="gsgcl-section-header">
-                        <h2><?php echo esc_html($config['benefit_heading']); ?></h2>
-                        <div class="gsgcl-offer"><?php echo esc_html($config['benefit_discount']); ?></div>
-                        <h3><?php echo esc_html($config['benefit_subheading']); ?></h3>
-                        <p><?php echo esc_html($config['benefit_description']); ?></p>
-                    </header>
-                    <div class="gsgcl-card-grid">
-                        <?php foreach ($config['benefit_cards'] as $card) : ?>
-                            <article class="gsgcl-card">
-                                <span class="gsgcl-card__icon"></span>
-                                <h4><?php echo esc_html($card['title']); ?></h4>
-                                <p><?php echo esc_html($card['body']); ?></p>
-                            </article>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </section>
-
-            <section class="gsgcl-steps">
-                <div class="gsgcl-wrap">
-                    <header class="gsgcl-section-header">
-                        <h2><?php echo esc_html($config['steps_heading']); ?></h2>
-                        <p><?php echo esc_html($config['steps_subheading']); ?></p>
-                    </header>
-                    <div class="gsgcl-steps__grid">
-                        <?php foreach ($config['steps'] as $index => $step) : ?>
-                            <article class="gsgcl-step">
-                                <div class="gsgcl-step__number"><?php echo esc_html((string) ($index + 1)); ?></div>
-                                <h3><?php echo esc_html($step['title']); ?></h3>
-                                <p><?php echo esc_html($step['body']); ?></p>
-                            </article>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </section>
-
-            <section id="gsgcl-form" class="gsgcl-form-section">
-                <div class="gsgcl-wrap">
-                    <div class="gsgcl-form-card">
-                        <header class="gsgcl-form-card__header">
-                            <h2><?php echo esc_html($config['form_heading']); ?></h2>
-                            <p><?php echo esc_html($config['form_description']); ?></p>
-                        </header>
-
-                        <?php if ($notice_type && $notice_message) : ?>
-                            <div class="gsgcl-notice gsgcl-notice--<?php echo esc_attr($notice_type); ?>">
-                                <?php echo esc_html($notice_message); ?>
-                            </div>
-                        <?php endif; ?>
-
-                        <form class="gsgcl-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-                            <input type="hidden" name="action" value="gsgcl_submit_landing" />
-                            <input type="hidden" name="landing_id" value="<?php echo esc_attr($landing_id); ?>" />
-                            <input type="hidden" name="page_id" value="<?php echo esc_attr($page_id); ?>" />
-                            <input type="hidden" name="gsgcl_form_nonce" value="<?php echo esc_attr(wp_create_nonce('gsgcl_submit_landing')); ?>" />
-                            <div class="gsgcl-honeypot" aria-hidden="true">
-                                <label for="gsgcl_company">Company</label>
-                                <input type="text" id="gsgcl_company" name="company" tabindex="-1" autocomplete="off" />
-                            </div>
-
-                            <div class="gsgcl-form__grid">
-                                <div>
-                                    <h3><?php echo esc_html__('Datos de tu amigo', 'gsg-custom-landings'); ?></h3>
-                                    <div class="gsgcl-field-grid">
-                                        <label><span><?php echo esc_html__('Nombre', 'gsg-custom-landings'); ?></span><input type="text" name="friend_name" required /></label>
-                                        <label><span><?php echo esc_html__('Apellido', 'gsg-custom-landings'); ?></span><input type="text" name="friend_last_name" required /></label>
-                                        <label><span><?php echo esc_html__('País destino', 'gsg-custom-landings'); ?></span><input type="text" name="friend_destination" /></label>
-                                        <label><span><?php echo esc_html__('WhatsApp', 'gsg-custom-landings'); ?></span><input type="text" name="friend_whatsapp" /></label>
-                                        <label><span><?php echo esc_html__('Email', 'gsg-custom-landings'); ?></span><input type="email" name="friend_email" required /></label>
-                                        <label><span><?php echo esc_html__('¿Qué le interesa?', 'gsg-custom-landings'); ?></span><input type="text" name="friend_interest" /></label>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <h3><?php echo esc_html__('Tus datos', 'gsg-custom-landings'); ?></h3>
-                                    <div class="gsgcl-field-grid">
-                                        <label><span><?php echo esc_html__('Tu nombre completo', 'gsg-custom-landings'); ?></span><input type="text" name="student_name" required /></label>
-                                        <label><span><?php echo esc_html__('Tu email', 'gsg-custom-landings'); ?></span><input type="email" name="student_email" required /></label>
-                                        <label class="gsgcl-field-grid__full"><span><?php echo esc_html__('Comentarios', 'gsg-custom-landings'); ?></span><textarea name="student_comments" rows="6" placeholder="<?php echo esc_attr__('Algo que debamos saber?', 'gsg-custom-landings'); ?>"></textarea></label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button class="gsgcl-button gsgcl-button--primary" type="submit"><?php echo esc_html($config['primary_cta_label']); ?></button>
-                        </form>
-                    </div>
-                </div>
-            </section>
-
-            <section class="gsgcl-reasons">
-                <div class="gsgcl-wrap gsgcl-reasons__grid">
-                    <div class="gsgcl-reasons__panel">
-                        <h2><?php echo esc_html($config['reasons_heading']); ?></h2>
-                        <ul>
-                            <?php foreach ($config['reasons_list'] as $reason) : ?>
-                                <li><?php echo esc_html($reason); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                    <aside class="gsgcl-help-card">
-                        <h3><?php echo esc_html($config['help_heading']); ?></h3>
-                        <p><?php echo esc_html($config['help_text']); ?></p>
-                        <div class="gsgcl-help-card__actions">
-                            <a class="gsgcl-button gsgcl-button--whatsapp" href="<?php echo esc_url($config['help_whatsapp_pe']); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__('Escríbenos por WhatsApp - Perú', 'gsg-custom-landings'); ?></a>
-                            <a class="gsgcl-button gsgcl-button--whatsapp" href="<?php echo esc_url($config['help_whatsapp_co']); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__('Escríbenos por WhatsApp - Colombia', 'gsg-custom-landings'); ?></a>
-                        </div>
-                    </aside>
-                </div>
-            </section>
-        </div>
-        <?php
+        $this->render_landing_legacy($config, $landing_id, $page_id, $notice_type, $notice_message);
     }
 
     private function render_landing_from_sections($landing_id, $page_id, $config, $notice_type, $notice_message)
@@ -403,13 +268,14 @@ class GSGCL_Renderer
 
     private function render_benefits_section($config)
     {
+        $icon_classes = array('person', 'gift');
         ?>
         <section class="gsgcl-benefit gsgcl-benefit--cards-only">
             <div class="gsgcl-wrap">
                 <div class="gsgcl-card-grid">
-                    <?php foreach ($config['benefit_cards'] as $card) : ?>
+                    <?php foreach ($config['benefit_cards'] as $idx => $card) : ?>
                         <article class="gsgcl-card">
-                            <span class="gsgcl-card__icon"></span>
+                            <span class="gsgcl-card__icon gsgcl-card__icon--<?php echo esc_attr($icon_classes[$idx] ?? 'person'); ?>"></span>
                             <h4><?php echo esc_html($card['title']); ?></h4>
                             <p><?php echo esc_html($card['body']); ?></p>
                         </article>
@@ -476,24 +342,44 @@ class GSGCL_Renderer
                                 <div class="gsgcl-field-grid">
                                     <label><span><?php echo esc_html__('Nombre', 'gsg-custom-landings'); ?></span><input type="text" name="friend_name" required /></label>
                                     <label><span><?php echo esc_html__('Apellido', 'gsg-custom-landings'); ?></span><input type="text" name="friend_last_name" required /></label>
-                                    <label><span><?php echo esc_html__('País destino', 'gsg-custom-landings'); ?></span><input type="text" name="friend_destination" /></label>
-                                    <label><span><?php echo esc_html__('WhatsApp', 'gsg-custom-landings'); ?></span><input type="text" name="friend_whatsapp" /></label>
+                                    <label><span><?php echo esc_html__('País donde vive', 'gsg-custom-landings'); ?></span>
+                                        <select name="friend_destination">
+                                            <option value=""><?php echo esc_html__('Seleccione', 'gsg-custom-landings'); ?></option>
+                                            <option value="Peru"><?php echo esc_html__('Perú', 'gsg-custom-landings'); ?></option>
+                                            <option value="Colombia"><?php echo esc_html__('Colombia', 'gsg-custom-landings'); ?></option>
+                                            <option value="Mexico"><?php echo esc_html__('México', 'gsg-custom-landings'); ?></option>
+                                            <option value="Chile"><?php echo esc_html__('Chile', 'gsg-custom-landings'); ?></option>
+                                            <option value="Argentina"><?php echo esc_html__('Argentina', 'gsg-custom-landings'); ?></option>
+                                            <option value="Ecuador"><?php echo esc_html__('Ecuador', 'gsg-custom-landings'); ?></option>
+                                            <option value="Bolivia"><?php echo esc_html__('Bolivia', 'gsg-custom-landings'); ?></option>
+                                            <option value="Otro"><?php echo esc_html__('Otro', 'gsg-custom-landings'); ?></option>
+                                        </select>
+                                    </label>
+                                    <label><span><?php echo esc_html__('WhatsApp', 'gsg-custom-landings'); ?></span><input type="tel" name="friend_whatsapp" placeholder="+51" /></label>
                                     <label><span><?php echo esc_html__('Email', 'gsg-custom-landings'); ?></span><input type="email" name="friend_email" required /></label>
-                                    <label><span><?php echo esc_html__('¿Qué le interesa?', 'gsg-custom-landings'); ?></span><input type="text" name="friend_interest" /></label>
+                                    <label><span><?php echo esc_html__('¿Qué le interesa?', 'gsg-custom-landings'); ?></span>
+                                        <select name="friend_interest">
+                                            <option value=""><?php echo esc_html__('Seleccione una opción', 'gsg-custom-landings'); ?></option>
+                                            <option value="Exam Prep">Exam Prep</option>
+                                            <option value="Admission Advisory">Admission Advisory</option>
+                                            <option value="Ambos"><?php echo esc_html__('Ambos', 'gsg-custom-landings'); ?></option>
+                                            <option value="No está seguro"><?php echo esc_html__('No está seguro', 'gsg-custom-landings'); ?></option>
+                                        </select>
+                                    </label>
                                 </div>
                             </div>
 
                             <div>
-                                <h3><?php echo esc_html__('Tus datos', 'gsg-custom-landings'); ?></h3>
+                                <h3><?php echo esc_html__('Tus datos (estudiante GSG)', 'gsg-custom-landings'); ?></h3>
                                 <div class="gsgcl-field-grid">
                                     <label><span><?php echo esc_html__('Tu nombre completo', 'gsg-custom-landings'); ?></span><input type="text" name="student_name" required /></label>
-                                    <label><span><?php echo esc_html__('Tu email', 'gsg-custom-landings'); ?></span><input type="email" name="student_email" required /></label>
-                                    <label class="gsgcl-field-grid__full"><span><?php echo esc_html__('Comentarios', 'gsg-custom-landings'); ?></span><textarea name="student_comments" rows="6" placeholder="<?php echo esc_attr__('Algo que debamos saber?', 'gsg-custom-landings'); ?>"></textarea></label>
+                                    <label><span><?php echo esc_html__('Tu email registrado en GSG', 'gsg-custom-landings'); ?></span><input type="email" name="student_email" required /></label>
+                                    <label class="gsgcl-field-grid__full"><span><?php echo esc_html__('Comentario opcional', 'gsg-custom-landings'); ?></span><textarea name="student_comments" rows="4" placeholder="<?php echo esc_attr__('¿Algo que debamos saber?', 'gsg-custom-landings'); ?>"></textarea></label>
                                 </div>
                             </div>
                         </div>
 
-                        <button class="gsgcl-button gsgcl-button--primary" type="submit"><?php echo esc_html($config['primary_cta_label']); ?></button>
+                        <button class="gsgcl-button gsgcl-button--accent gsgcl-button--submit" type="submit"><?php echo esc_html($config['primary_cta_label']); ?></button>
                     </form>
                 </div>
             </div>
@@ -518,8 +404,8 @@ class GSGCL_Renderer
                     <h3><?php echo esc_html($config['help_heading']); ?></h3>
                     <p><?php echo esc_html($config['help_text']); ?></p>
                     <div class="gsgcl-help-card__actions">
-                        <a class="gsgcl-button gsgcl-button--whatsapp" href="<?php echo esc_url($config['help_whatsapp_pe']); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__('Escríbenos por WhatsApp - Perú', 'gsg-custom-landings'); ?></a>
-                        <a class="gsgcl-button gsgcl-button--whatsapp" href="<?php echo esc_url($config['help_whatsapp_co']); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__('Escríbenos por WhatsApp - Colombia', 'gsg-custom-landings'); ?></a>
+                        <a class="gsgcl-button gsgcl-button--whatsapp" href="<?php echo esc_url($config['help_whatsapp_pe']); ?>" target="_blank" rel="noopener noreferrer"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.503 3.935 1.389 5.611L0 24l6.597-1.332A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-1.875 0-3.622-.525-5.113-1.433l-.366-.218-3.797.766.8-3.692-.24-.381A9.713 9.713 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg> <?php echo esc_html__('Escríbenos por WhatsApp - Perú y Latam', 'gsg-custom-landings'); ?></a>
+                        <a class="gsgcl-button gsgcl-button--whatsapp" href="<?php echo esc_url($config['help_whatsapp_co']); ?>" target="_blank" rel="noopener noreferrer"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.503 3.935 1.389 5.611L0 24l6.597-1.332A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-1.875 0-3.622-.525-5.113-1.433l-.366-.218-3.797.766.8-3.692-.24-.381A9.713 9.713 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg> <?php echo esc_html__('Escríbenos por WhatsApp - Colombia', 'gsg-custom-landings'); ?></a>
                     </div>
                 </aside>
             </div>
