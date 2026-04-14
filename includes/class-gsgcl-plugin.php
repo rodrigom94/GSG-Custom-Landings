@@ -33,7 +33,7 @@ class GSGCL_Plugin
         $this->renderer = new GSGCL_Renderer($this);
         $this->admin = new GSGCL_Admin($this);
         $this->form_handler = new GSGCL_Form_Handler($this);
-        $this->section_library = new GSGCL_Section_Library($this, new GSGCL_Section_AI());
+        $this->section_library = new GSGCL_Section_Library($this, new GSGCL_Section_AI($this->settings));
 
         add_action('init', array($this, 'register_post_types'));
         add_action('init', array($this, 'register_shortcode'));
@@ -179,6 +179,20 @@ class GSGCL_Plugin
             array(),
             GSGCL_VERSION
         );
+
+        $font_family = $this->sanitize_google_font_family($this->get_landing_meta($landing_id, 'gsgcl_google_font_family', 'Poppins'));
+
+        wp_enqueue_style(
+            'gsgcl-google-font',
+            $this->build_google_fonts_url($font_family),
+            array(),
+            null
+        );
+
+        wp_add_inline_style(
+            'gsgcl-frontend',
+            '.gsgcl-shell { --gsgcl-font-family: "' . esc_attr($font_family) . '", "Segoe UI", sans-serif; }'
+        );
     }
 
     public function add_body_class($classes)
@@ -238,6 +252,11 @@ class GSGCL_Plugin
         }
 
         return $value;
+    }
+
+    public function should_hide_theme_chrome($landing_id)
+    {
+        return '1' === $this->get_landing_meta($landing_id, 'gsgcl_hide_theme_chrome', '0');
     }
 
     public static function activate()
@@ -345,5 +364,26 @@ class GSGCL_Plugin
         }
 
         return $schema;
+    }
+
+    private function sanitize_google_font_family($value)
+    {
+        $value = preg_replace('/[^A-Za-z0-9\s_-]/', '', (string) $value);
+        $value = trim(preg_replace('/\s+/', ' ', (string) $value));
+
+        return $value ? $value : 'Poppins';
+    }
+
+    private function build_google_fonts_url($font_family)
+    {
+        $family_query = str_replace(' ', '+', $font_family) . ':wght@400;500;600;700;800';
+
+        return add_query_arg(
+            array(
+                'family' => $family_query,
+                'display' => 'swap',
+            ),
+            'https://fonts.googleapis.com/css2'
+        );
     }
 }

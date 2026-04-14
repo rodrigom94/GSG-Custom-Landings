@@ -8,6 +8,8 @@ class GSGCL_Settings
 {
     private $option_name = 'gsgcl_settings';
 
+    private $default_model = 'gpt-5.4';
+
     public function __construct()
     {
         add_action('admin_menu', array($this, 'register_settings_page'));
@@ -38,7 +40,7 @@ class GSGCL_Settings
             'gsgcl_openai_section',
             __('Integración OpenAI', 'gsg-custom-landings'),
             function () {
-                echo '<p>' . esc_html__('Configuración global para futuras automatizaciones. La clave se almacena en WordPress y todavía no ejecuta llamadas externas.', 'gsg-custom-landings') . '</p>';
+                echo '<p>' . esc_html__('Configuración global para generar propuestas de secciones con OpenAI. Si la API no responde o no hay key, el plugin usa el generador local como fallback.', 'gsg-custom-landings') . '</p>';
             },
             'gsgcl-settings'
         );
@@ -59,13 +61,12 @@ class GSGCL_Settings
         add_settings_field(
             'openai_model',
             __('Modelo', 'gsg-custom-landings'),
-            array($this, 'render_text_field'),
+            array($this, 'render_select_field'),
             'gsgcl-settings',
             'gsgcl_openai_section',
             array(
                 'key' => 'openai_model',
-                'type' => 'text',
-                'placeholder' => 'gpt-4.1-mini',
+                'options' => $this->get_model_options(),
             )
         );
 
@@ -89,7 +90,7 @@ class GSGCL_Settings
 
         return array(
             'openai_api_key' => isset($settings['openai_api_key']) ? sanitize_text_field($settings['openai_api_key']) : '',
-            'openai_model' => isset($settings['openai_model']) ? sanitize_text_field($settings['openai_model']) : 'gpt-4.1-mini',
+            'openai_model' => $this->sanitize_model(isset($settings['openai_model']) ? sanitize_text_field($settings['openai_model']) : $this->default_model),
             'openai_timeout' => isset($settings['openai_timeout']) ? max(5, min(120, absint($settings['openai_timeout']))) : 20,
         );
     }
@@ -100,10 +101,35 @@ class GSGCL_Settings
             get_option($this->option_name, array()),
             array(
                 'openai_api_key' => '',
-                'openai_model' => 'gpt-4.1-mini',
+                'openai_model' => $this->default_model,
                 'openai_timeout' => 20,
             )
         );
+    }
+
+    public function get_model_options()
+    {
+        return apply_filters(
+            'gsgcl_openai_model_options',
+            array(
+                'gpt-5.4' => 'GPT-5.4',
+                'gpt-5.4-mini' => 'GPT-5.4 Mini',
+                'gpt-4.1' => 'GPT-4.1',
+                'gpt-4.1-mini' => 'GPT-4.1 Mini',
+            )
+        );
+    }
+
+    private function sanitize_model($model)
+    {
+        $model = is_string($model) ? trim($model) : '';
+        $options = $this->get_model_options();
+
+        if (! isset($options[$model])) {
+            return $this->default_model;
+        }
+
+        return $model;
     }
 
     public function render_settings_page()
@@ -156,6 +182,23 @@ class GSGCL_Settings
             name="<?php echo esc_attr($this->option_name); ?>[<?php echo esc_attr($key); ?>]"
             value="<?php echo esc_attr($settings[$key]); ?>"
         />
+        <?php
+    }
+
+    public function render_select_field($args)
+    {
+        $settings = $this->get_settings();
+        $key = $args['key'];
+        $options = isset($args['options']) && is_array($args['options']) ? $args['options'] : array();
+        ?>
+        <select
+            name="<?php echo esc_attr($this->option_name); ?>[<?php echo esc_attr($key); ?>]"
+        >
+            <?php foreach ($options as $value => $label) : ?>
+                <option value="<?php echo esc_attr($value); ?>" <?php selected($settings[$key], $value); ?>><?php echo esc_html($label); ?></option>
+            <?php endforeach; ?>
+        </select>
+        <p class="description"><?php echo esc_html__('GPT-5.4 queda seleccionado por defecto para nuevas instalaciones.', 'gsg-custom-landings'); ?></p>
         <?php
     }
 }

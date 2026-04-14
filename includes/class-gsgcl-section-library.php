@@ -22,6 +22,11 @@ class GSGCL_Section_Library
         add_action('admin_post_gsgcl_apply_section_proposal', array($this, 'handle_apply_proposal'));
         add_action('admin_post_gsgcl_restore_section_revision', array($this, 'handle_restore_revision'));
         add_action('admin_post_gsgcl_duplicate_section', array($this, 'handle_duplicate_section'));
+        add_action('wp_ajax_gsgcl_preview_section', array($this, 'ajax_preview_section'));
+        add_action('wp_ajax_gsgcl_save_section', array($this, 'ajax_save_section'));
+        add_action('wp_ajax_gsgcl_restore_section', array($this, 'ajax_restore_section'));
+        add_action('wp_ajax_gsgcl_generate_proposals', array($this, 'ajax_generate_proposals'));
+        add_action('wp_ajax_gsgcl_apply_proposal', array($this, 'ajax_apply_proposal'));
         add_action('admin_notices', array($this, 'render_admin_notice'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
         add_filter('post_row_actions', array($this, 'register_row_actions'), 10, 2);
@@ -80,6 +85,15 @@ class GSGCL_Section_Library
             'side',
             'default'
         );
+
+        add_meta_box(
+            'gsgcl_section_live_preview',
+            __('Preview live', 'gsg-custom-landings'),
+            array($this, 'render_live_preview_metabox'),
+            'gsg_section',
+            'normal',
+            'low'
+        );
     }
 
     public function enqueue_admin_assets($hook_suffix)
@@ -107,6 +121,7 @@ class GSGCL_Section_Library
         $version = $this->get_section_meta($post->ID, 'gsgcl_section_version', '1');
         $reference_id = absint($this->get_section_meta($post->ID, 'gsgcl_section_reference_id', '0'));
         $root_id = absint($this->get_section_meta($post->ID, 'gsgcl_section_root_id', '0'));
+        $reference_image_url = $this->get_section_meta($post->ID, 'gsgcl_section_reference_image_url', '');
         ?>
         <table class="form-table" role="presentation">
             <tbody>
@@ -129,6 +144,13 @@ class GSGCL_Section_Library
                     <td><input class="small-text" type="number" min="1" name="gsgcl_section_version" id="gsgcl_section_version" value="<?php echo esc_attr($version); ?>" /></td>
                 </tr>
                 <tr>
+                    <th scope="row"><label for="gsgcl_section_reference_image_url"><?php echo esc_html__('Imagen de referencia', 'gsg-custom-landings'); ?></label></th>
+                    <td>
+                        <input class="regular-text" type="url" name="gsgcl_section_reference_image_url" id="gsgcl_section_reference_image_url" value="<?php echo esc_attr($reference_image_url); ?>" placeholder="https://..." />
+                        <p class="description"><?php echo esc_html__('Pega una imagen de Figma o mockup para usarla como referencia visual de la sección.', 'gsg-custom-landings'); ?></p>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row"><?php echo esc_html__('Referencia', 'gsg-custom-landings'); ?></th>
                     <td>
                         <p><?php echo $reference_id ? esc_html(sprintf(__('Section #%d', 'gsg-custom-landings'), $reference_id)) : esc_html__('Sin referencia', 'gsg-custom-landings'); ?></p>
@@ -144,6 +166,7 @@ class GSGCL_Section_Library
     {
         $brief = $this->get_section_meta($post->ID, 'gsgcl_section_brief', '');
         $preview_html = $this->get_section_meta($post->ID, 'gsgcl_section_preview_html', '');
+        $reference_image_url = $this->get_section_meta($post->ID, 'gsgcl_section_reference_image_url', '');
         $analysis = $this->get_analysis($post->ID);
         ?>
         <div class="gsgcl-admin-stack">
@@ -155,6 +178,15 @@ class GSGCL_Section_Library
                 <label for="gsgcl_section_preview_html"><strong><?php echo esc_html__('HTML preview editable', 'gsg-custom-landings'); ?></strong></label>
                 <textarea class="large-text code gsgcl-code-area" rows="18" name="gsgcl_section_preview_html" id="gsgcl_section_preview_html"><?php echo esc_textarea($preview_html); ?></textarea>
             </p>
+            <p>
+                <label for="gsgcl_section_reference_image_url_preview"><strong><?php echo esc_html__('Referencia visual', 'gsg-custom-landings'); ?></strong></label>
+                <input class="large-text gsgcl-section-reference-image" type="url" name="gsgcl_section_reference_image_url_preview" id="gsgcl_section_reference_image_url_preview" value="<?php echo esc_attr($reference_image_url); ?>" placeholder="https://..." />
+            </p>
+            <div class="gsgcl-live-actions" data-section-id="<?php echo esc_attr((string) $post->ID); ?>">
+                <button type="button" class="button button-secondary gsgcl-preview-live-button"><?php echo esc_html__('Actualizar preview live', 'gsg-custom-landings'); ?></button>
+                <button type="button" class="button button-primary gsgcl-save-live-button"><?php echo esc_html__('Guardar revisión sin recarga', 'gsg-custom-landings'); ?></button>
+                <span class="gsgcl-live-status" aria-live="polite"></span>
+            </div>
             <?php if ($post->ID) : ?>
                 <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="gsgcl-inline-form">
                     <input type="hidden" name="action" value="gsgcl_generate_section_proposals" />
@@ -178,6 +210,117 @@ class GSGCL_Section_Library
             </div>
         </div>
         <?php
+    }
+
+    public function render_live_preview_metabox($post)
+    {
+        $preview_html = $this->get_section_meta($post->ID, 'gsgcl_section_preview_html', '');
+        ?>
+        <div class="gsgcl-live-preview-wrap" data-live-preview-root="1">
+            <div class="gsgcl-live-preview-frame" id="gsgcl-live-preview-frame">
+                <?php echo wp_kses_post($preview_html); ?>
+            </div>
+        </div>
+        <?php
+    }
+
+    public function render_inline_editor($section_id)
+    {
+        $section_id = absint($section_id);
+        $post = get_post($section_id);
+        if (! $post || 'gsg_section' !== $post->post_type) {
+            return '';
+        }
+
+        $type = $this->get_section_meta($section_id, 'gsgcl_section_type', 'generic');
+        $variant = $this->get_section_meta($section_id, 'gsgcl_section_variant', 'default-v1');
+        $version = $this->get_section_meta($section_id, 'gsgcl_section_version', '1');
+        $brief = $this->get_section_meta($section_id, 'gsgcl_section_brief', '');
+        $preview_html = $this->get_section_meta($section_id, 'gsgcl_section_preview_html', '');
+        $reference_image_url = $this->get_section_meta($section_id, 'gsgcl_section_reference_image_url', '');
+        $analysis = $this->get_analysis($section_id);
+
+        ob_start();
+        ?>
+        <div class="gsgcl-section-editor" data-section-id="<?php echo esc_attr((string) $section_id); ?>">
+            <div class="gsgcl-section-editor__header">
+                <div>
+                    <h4><?php echo esc_html($post->post_title); ?></h4>
+                    <p><?php echo esc_html($type . ' / ' . $variant . ' / v' . $version); ?></p>
+                </div>
+                <a class="button button-small" href="<?php echo esc_url(get_edit_post_link($section_id, '')); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__('Abrir sección', 'gsg-custom-landings'); ?></a>
+            </div>
+            <div class="gsgcl-section-editor__grid">
+                <div class="gsgcl-section-editor__panel">
+                    <p>
+                        <label><strong><?php echo esc_html__('Brief', 'gsg-custom-landings'); ?></strong></label>
+                        <textarea class="large-text code gsgcl-section-brief" rows="4"><?php echo esc_textarea($brief); ?></textarea>
+                    </p>
+                    <p>
+                        <label><strong><?php echo esc_html__('Imagen de referencia', 'gsg-custom-landings'); ?></strong></label>
+                        <input class="large-text gsgcl-section-reference-image" type="url" value="<?php echo esc_attr($reference_image_url); ?>" placeholder="https://..." />
+                    </p>
+                    <p>
+                        <label><strong><?php echo esc_html__('HTML preview', 'gsg-custom-landings'); ?></strong></label>
+                        <textarea class="large-text code gsgcl-section-preview-html" rows="12"><?php echo esc_textarea($preview_html); ?></textarea>
+                    </p>
+                    <div class="gsgcl-live-actions">
+                        <button type="button" class="button button-secondary gsgcl-preview-live-button"><?php echo esc_html__('Preview live', 'gsg-custom-landings'); ?></button>
+                        <button type="button" class="button button-primary gsgcl-save-live-button"><?php echo esc_html__('Guardar revisión', 'gsg-custom-landings'); ?></button>
+                        <button type="button" class="button gsgcl-inline-generate-button"><?php echo esc_html__('Generar 3 propuestas', 'gsg-custom-landings'); ?></button>
+                        <span class="gsgcl-live-status" aria-live="polite"></span>
+                    </div>
+                    <div class="gsgcl-analysis-box">
+                        <h4><?php echo esc_html__('Análisis actual del HTML', 'gsg-custom-landings'); ?></h4>
+                        <ul>
+                            <li><?php echo esc_html(sprintf(__('Headings: %d', 'gsg-custom-landings'), $analysis['heading_count'])); ?></li>
+                            <li><?php echo esc_html(sprintf(__('Párrafos: %d', 'gsg-custom-landings'), $analysis['paragraph_count'])); ?></li>
+                            <li><?php echo esc_html(sprintf(__('Inputs: %d', 'gsg-custom-landings'), $analysis['input_count'])); ?></li>
+                            <li><?php echo esc_html(sprintf(__('CTAs: %d', 'gsg-custom-landings'), $analysis['cta_count'])); ?></li>
+                        </ul>
+                        <?php if (! empty($analysis['headings'])) : ?>
+                            <p><strong><?php echo esc_html__('Headings detectados:', 'gsg-custom-landings'); ?></strong> <?php echo esc_html(implode(' | ', $analysis['headings'])); ?></p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="gsgcl-section-editor__panel">
+                    <div class="gsgcl-live-preview-wrap">
+                        <div class="gsgcl-live-preview-frame gsgcl-live-preview-frame--inline">
+                            <?php echo wp_kses_post($preview_html); ?>
+                        </div>
+                    </div>
+                    <div class="gsgcl-inline-sidepanels">
+                        <div class="gsgcl-inline-proposals-panel">
+                            <h4><?php echo esc_html__('Variaciones propuestas', 'gsg-custom-landings'); ?></h4>
+                            <?php echo $this->render_proposals_markup($section_id); ?>
+                        </div>
+                        <div class="gsgcl-inline-revisions-panel">
+                            <h4><?php echo esc_html__('Revisiones', 'gsg-custom-landings'); ?></h4>
+                            <?php echo $this->render_revisions_markup($section_id); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+
+        return ob_get_clean();
+    }
+
+    public function get_section_editor_payload($section_id)
+    {
+        $section_id = absint($section_id);
+        return array(
+            'id' => $section_id,
+            'title' => get_the_title($section_id),
+            'type' => $this->get_section_meta($section_id, 'gsgcl_section_type', 'generic'),
+            'variant' => $this->get_section_meta($section_id, 'gsgcl_section_variant', 'default-v1'),
+            'version' => max(1, absint($this->get_section_meta($section_id, 'gsgcl_section_version', '1'))),
+            'brief' => $this->get_section_meta($section_id, 'gsgcl_section_brief', ''),
+            'preview_html' => $this->get_section_meta($section_id, 'gsgcl_section_preview_html', ''),
+            'reference_image_url' => $this->get_section_meta($section_id, 'gsgcl_section_reference_image_url', ''),
+            'editor_html' => $this->render_inline_editor($section_id),
+        );
     }
 
     public function render_proposals_metabox($post)
@@ -263,6 +406,7 @@ class GSGCL_Section_Library
         update_post_meta($post_id, 'gsgcl_section_variant', isset($_POST['gsgcl_section_variant']) ? sanitize_title(wp_unslash($_POST['gsgcl_section_variant'])) : 'default-v1');
         update_post_meta($post_id, 'gsgcl_section_version', isset($_POST['gsgcl_section_version']) ? max(1, absint(wp_unslash($_POST['gsgcl_section_version']))) : 1);
         update_post_meta($post_id, 'gsgcl_section_brief', isset($_POST['gsgcl_section_brief']) ? sanitize_textarea_field(wp_unslash($_POST['gsgcl_section_brief'])) : '');
+        update_post_meta($post_id, 'gsgcl_section_reference_image_url', isset($_POST['gsgcl_section_reference_image_url']) ? esc_url_raw(wp_unslash($_POST['gsgcl_section_reference_image_url'])) : '');
         update_post_meta($post_id, 'gsgcl_section_preview_html', $new_preview_html);
 
         if (! get_post_meta($post_id, 'gsgcl_section_root_id', true)) {
@@ -284,8 +428,9 @@ class GSGCL_Section_Library
         $section_type = $this->get_section_meta($section_id, 'gsgcl_section_type', 'generic');
         $brief = $this->get_section_meta($section_id, 'gsgcl_section_brief', '');
         $preview_html = $this->get_section_meta($section_id, 'gsgcl_section_preview_html', '');
+        $reference_image_url = $this->get_section_meta($section_id, 'gsgcl_section_reference_image_url', '');
 
-        update_post_meta($section_id, 'gsgcl_section_proposals', $this->ai->generate_proposals($section_type, $brief, $preview_html));
+        update_post_meta($section_id, 'gsgcl_section_proposals', $this->ai->generate_proposals($section_type, $brief, $preview_html, $reference_image_url));
         $this->redirect_back_to_section($section_id, 'proposals_generated');
     }
 
@@ -341,6 +486,144 @@ class GSGCL_Section_Library
         update_post_meta($section_id, 'gsgcl_section_analysis', $this->analyze_html($matched_revision['preview_html']));
 
         $this->redirect_back_to_section($section_id, 'revision_restored');
+    }
+
+    public function ajax_preview_section()
+    {
+        $section_id = isset($_POST['section_id']) ? absint($_POST['section_id']) : 0;
+        $this->guard_ajax_request($section_id, 'gsgcl_ajax_preview_section');
+
+        $preview_html = isset($_POST['preview_html']) ? $this->sanitize_html_preview(wp_unslash($_POST['preview_html'])) : '';
+        $analysis = $this->analyze_html($preview_html);
+
+        wp_send_json_success(
+            array(
+                'preview_html' => $preview_html,
+                'analysis' => $analysis,
+                'revisions_html' => $this->render_revisions_markup($section_id),
+                'proposals_html' => $this->render_proposals_markup($section_id),
+            )
+        );
+    }
+
+    public function ajax_save_section()
+    {
+        $section_id = isset($_POST['section_id']) ? absint($_POST['section_id']) : 0;
+        $this->guard_ajax_request($section_id, 'gsgcl_ajax_save_section');
+
+        $old_preview_html = $this->get_section_meta($section_id, 'gsgcl_section_preview_html', '');
+        $new_preview_html = isset($_POST['preview_html']) ? $this->sanitize_html_preview(wp_unslash($_POST['preview_html'])) : '';
+        $brief = isset($_POST['brief']) ? sanitize_textarea_field(wp_unslash($_POST['brief'])) : '';
+        $reference_image_url = isset($_POST['reference_image_url']) ? esc_url_raw(wp_unslash($_POST['reference_image_url'])) : '';
+        $section_type = isset($_POST['section_type']) ? sanitize_key(wp_unslash($_POST['section_type'])) : $this->get_section_meta($section_id, 'gsgcl_section_type', 'generic');
+        $variant = isset($_POST['variant']) ? sanitize_title(wp_unslash($_POST['variant'])) : $this->get_section_meta($section_id, 'gsgcl_section_variant', 'default-v1');
+        $version = isset($_POST['version']) ? max(1, absint(wp_unslash($_POST['version']))) : max(1, absint($this->get_section_meta($section_id, 'gsgcl_section_version', '1')));
+
+        if ($old_preview_html && $old_preview_html !== $new_preview_html) {
+            $this->store_revision($section_id, $old_preview_html, __('Edición live', 'gsg-custom-landings'));
+        }
+
+        update_post_meta($section_id, 'gsgcl_section_type', $section_type);
+        update_post_meta($section_id, 'gsgcl_section_variant', $variant);
+        update_post_meta($section_id, 'gsgcl_section_version', $version);
+        update_post_meta($section_id, 'gsgcl_section_brief', $brief);
+        update_post_meta($section_id, 'gsgcl_section_reference_image_url', $reference_image_url);
+        update_post_meta($section_id, 'gsgcl_section_preview_html', $new_preview_html);
+        update_post_meta($section_id, 'gsgcl_section_analysis', $this->analyze_html($new_preview_html));
+
+        wp_send_json_success(
+            array(
+                'preview_html' => $new_preview_html,
+                'analysis' => $this->get_analysis($section_id),
+                'revisions_html' => $this->render_revisions_markup($section_id),
+            )
+        );
+    }
+
+    public function ajax_restore_section()
+    {
+        $section_id = isset($_POST['section_id']) ? absint($_POST['section_id']) : 0;
+        $this->guard_ajax_request($section_id, 'gsgcl_ajax_restore_section');
+
+        $revision_id = isset($_POST['revision_id']) ? sanitize_text_field(wp_unslash($_POST['revision_id'])) : '';
+        $revisions = $this->get_revisions($section_id);
+        $matched_revision = null;
+
+        foreach ($revisions as $revision) {
+            if ($revision['id'] === $revision_id) {
+                $matched_revision = $revision;
+                break;
+            }
+        }
+
+        if (! $matched_revision) {
+            wp_send_json_error(array('message' => __('Revisión no encontrada.', 'gsg-custom-landings')), 404);
+        }
+
+        $current_html = $this->get_section_meta($section_id, 'gsgcl_section_preview_html', '');
+        if ($current_html) {
+            $this->store_revision($section_id, $current_html, __('Antes de rollback', 'gsg-custom-landings'));
+        }
+
+        update_post_meta($section_id, 'gsgcl_section_preview_html', $this->sanitize_html_preview($matched_revision['preview_html']));
+        update_post_meta($section_id, 'gsgcl_section_analysis', $this->analyze_html($matched_revision['preview_html']));
+
+        wp_send_json_success(
+            array(
+                'preview_html' => $this->get_section_meta($section_id, 'gsgcl_section_preview_html', ''),
+                'analysis' => $this->get_analysis($section_id),
+                'revisions_html' => $this->render_revisions_markup($section_id),
+            )
+        );
+    }
+
+    public function ajax_generate_proposals()
+    {
+        $section_id = isset($_POST['section_id']) ? absint($_POST['section_id']) : 0;
+        $this->guard_ajax_request($section_id, 'gsgcl_ajax_generate_proposals');
+
+        $section_type = isset($_POST['section_type']) ? sanitize_key(wp_unslash($_POST['section_type'])) : $this->get_section_meta($section_id, 'gsgcl_section_type', 'generic');
+        $brief = isset($_POST['brief']) ? sanitize_textarea_field(wp_unslash($_POST['brief'])) : $this->get_section_meta($section_id, 'gsgcl_section_brief', '');
+        $preview_html = isset($_POST['preview_html']) ? $this->sanitize_html_preview(wp_unslash($_POST['preview_html'])) : $this->get_section_meta($section_id, 'gsgcl_section_preview_html', '');
+        $reference_image_url = isset($_POST['reference_image_url']) ? esc_url_raw(wp_unslash($_POST['reference_image_url'])) : $this->get_section_meta($section_id, 'gsgcl_section_reference_image_url', '');
+
+        update_post_meta($section_id, 'gsgcl_section_proposals', $this->ai->generate_proposals($section_type, $brief, $preview_html, $reference_image_url));
+
+        wp_send_json_success(
+            array(
+                'proposals_html' => $this->render_proposals_markup($section_id),
+            )
+        );
+    }
+
+    public function ajax_apply_proposal()
+    {
+        $section_id = isset($_POST['section_id']) ? absint($_POST['section_id']) : 0;
+        $this->guard_ajax_request($section_id, 'gsgcl_ajax_apply_proposal');
+
+        $proposal_index = isset($_POST['proposal_index']) ? absint($_POST['proposal_index']) : -1;
+        $proposals = $this->get_section_meta($section_id, 'gsgcl_section_proposals', array());
+        if (! isset($proposals[$proposal_index])) {
+            wp_send_json_error(array('message' => __('Propuesta no encontrada.', 'gsg-custom-landings')), 404);
+        }
+
+        $current_html = $this->get_section_meta($section_id, 'gsgcl_section_preview_html', '');
+        if ($current_html) {
+            $this->store_revision($section_id, $current_html, __('Antes de aplicar propuesta', 'gsg-custom-landings'));
+        }
+
+        $next_html = $this->sanitize_html_preview($proposals[$proposal_index]['html']);
+        update_post_meta($section_id, 'gsgcl_section_preview_html', $next_html);
+        update_post_meta($section_id, 'gsgcl_section_analysis', $this->analyze_html($next_html));
+
+        wp_send_json_success(
+            array(
+                'preview_html' => $next_html,
+                'analysis' => $this->get_analysis($section_id),
+                'revisions_html' => $this->render_revisions_markup($section_id),
+                'proposals_html' => $this->render_proposals_markup($section_id),
+            )
+        );
     }
 
     public function handle_duplicate_section()
@@ -517,6 +800,14 @@ class GSGCL_Section_Library
 
         if (! current_user_can('edit_post', $section_id)) {
             wp_die(esc_html__('No tienes permisos.', 'gsg-custom-landings'));
+        }
+    }
+
+    private function guard_ajax_request($section_id, $nonce_action)
+    {
+        $nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
+        if (! $section_id || ! wp_verify_nonce($nonce, $nonce_action) || ! current_user_can('edit_post', $section_id)) {
+            wp_send_json_error(array('message' => __('No autorizado.', 'gsg-custom-landings')), 403);
         }
     }
 
@@ -775,6 +1066,7 @@ class GSGCL_Section_Library
             'gsgcl_section_reference_id',
             'gsgcl_section_root_id',
             'gsgcl_section_brief',
+            'gsgcl_section_reference_image_url',
             'gsgcl_section_preview_html',
             'gsgcl_section_analysis',
             'gsgcl_section_proposals',
@@ -786,10 +1078,71 @@ class GSGCL_Section_Library
     {
         return '
         .gsgcl-admin-stack { display:grid; gap:16px; }
+        .gsgcl-sections-grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+        .gsgcl-sections-panel { padding:12px; background:#fff; border:1px solid #dcdcde; border-radius:8px; }
+        .gsgcl-section-library-list, .gsgcl-selected-sections { display:grid; gap:10px; }
+        .gsgcl-library-item, .gsgcl-selected-item { display:flex; gap:12px; justify-content:space-between; align-items:center; padding:10px; border:1px solid #dcdcde; border-radius:8px; background:#f8f9fa; }
+        .gsgcl-library-item > div, .gsgcl-selected-item > div { display:grid; gap:4px; }
+        .gsgcl-selected-sections { margin:0; padding:0; list-style:none; }
+        .gsgcl-drag-handle { cursor:move; color:#646970; font-weight:700; }
+        .gsgcl-inline-editors-wrap { display:grid; gap:16px; margin-top:16px; }
+        .gsgcl-section-editor { padding:16px; background:#fff; border:1px solid #dcdcde; border-radius:10px; }
+        .gsgcl-section-editor__header { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:12px; }
+        .gsgcl-section-editor__header h4 { margin:0 0 4px; }
+        .gsgcl-section-editor__header p { margin:0; color:#646970; }
+        .gsgcl-section-editor__grid { display:grid; grid-template-columns:1.05fr 0.95fr; gap:16px; }
+        .gsgcl-section-editor__panel { display:grid; gap:12px; }
+        .gsgcl-inline-sidepanels { display:grid; gap:12px; }
         .gsgcl-code-area { min-height: 320px; font-family: Consolas, monospace; }
+        .gsgcl-live-actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+        .gsgcl-live-status { color:#2271b1; font-weight:600; }
+        .gsgcl-live-preview-wrap { background:#f6f7f7; padding:12px; border-radius:8px; }
+        .gsgcl-live-preview-frame { padding:18px; background:#fff; border:1px solid #dcdcde; border-radius:8px; min-height:200px; }
+        .gsgcl-live-preview-frame--inline { min-height:260px; overflow:auto; }
         .gsgcl-analysis-box, .gsgcl-card-box { padding: 12px; background: #fff; border: 1px solid #dcdcde; border-radius: 8px; }
         .gsgcl-card-box p { margin: 8px 0; }
         .gsgcl-inline-form { display:grid; gap:8px; margin-top: 12px; }
+        @media (max-width: 1100px) { .gsgcl-section-editor__grid, .gsgcl-sections-grid { grid-template-columns:1fr; } }
         ';
+    }
+
+    private function render_revisions_markup($section_id)
+    {
+        $revisions = array_slice($this->get_revisions($section_id), 0, 8);
+        ob_start();
+
+        if (empty($revisions)) {
+            echo '<p>' . esc_html__('Todavía no hay revisiones guardadas.', 'gsg-custom-landings') . '</p>';
+        } else {
+            foreach ($revisions as $revision) {
+                echo '<div class="gsgcl-card-box">';
+                echo '<strong>' . esc_html($revision['label']) . '</strong>';
+                echo '<p>' . esc_html($revision['created_at']) . '</p>';
+                echo '<button type="button" class="button gsgcl-restore-revision-button" data-revision-id="' . esc_attr($revision['id']) . '">' . esc_html__('Restaurar', 'gsg-custom-landings') . '</button>';
+                echo '</div>';
+            }
+        }
+
+        return ob_get_clean();
+    }
+
+    private function render_proposals_markup($section_id)
+    {
+        $proposals = $this->get_section_meta($section_id, 'gsgcl_section_proposals', array());
+        ob_start();
+
+        if (empty($proposals)) {
+            echo '<p>' . esc_html__('Aún no hay propuestas generadas para esta sección.', 'gsg-custom-landings') . '</p>';
+        } else {
+            foreach ($proposals as $index => $proposal) {
+                echo '<div class="gsgcl-card-box">';
+                echo '<strong>' . esc_html($proposal['title']) . '</strong>';
+                echo '<p>' . esc_html($proposal['summary']) . '</p>';
+                echo '<button type="button" class="button gsgcl-apply-proposal-button" data-proposal-index="' . esc_attr((string) $index) . '">' . esc_html__('Usar propuesta', 'gsg-custom-landings') . '</button>';
+                echo '</div>';
+            }
+        }
+
+        return ob_get_clean();
     }
 }

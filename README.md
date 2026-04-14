@@ -8,7 +8,7 @@ Plugin de WordPress para crear landings y quizzes reutilizables sin tener que ge
 - Template dinámico con nombre `GSG Custom | {nombre_landing}` asignable desde páginas.
 - Campos seguros en admin con `nonce`, sanitización y validaciones.
 - Integración por hook configurable por landing.
-- Ajustes globales para OpenAI, listos para futura automatización.
+- Ajustes globales para OpenAI con generación real de propuestas de secciones y fallback local.
 - Captura de leads en CPT `Leads GSG`.
 - Primera landing responsive basada en la referencia visual de referidos.
 
@@ -17,7 +17,7 @@ Plugin de WordPress para crear landings y quizzes reutilizables sin tener que ge
 1. Activa el plugin.
 2. Revisa o edita la landing de ejemplo en `GSG Landings`.
 3. Crea o publica una página y asígnale el template `GSG Custom | Invita a un amigo`.
-4. Ajusta textos, imagen, hook y configuración OpenAI según la campaña.
+4. Ajusta textos, imagen, hook y configuración OpenAI según la campaña. El modelo por defecto es `gpt-5.4`.
 
 ## Hook de integración
 

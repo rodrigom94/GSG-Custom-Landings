@@ -8,12 +8,26 @@ class GSGCL_Admin
 {
     private $plugin;
 
+    private $google_font_presets = array(
+        'Poppins',
+        'Montserrat',
+        'Inter',
+        'DM Sans',
+        'Outfit',
+        'Nunito Sans',
+        'Playfair Display',
+        'Merriweather',
+        'Lora',
+        'Space Grotesk',
+    );
+
     public function __construct($plugin)
     {
         $this->plugin = $plugin;
 
         add_action('add_meta_boxes', array($this, 'register_meta_boxes'));
         add_action('save_post_gsg_landing', array($this, 'save_landing_meta'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
     }
 
     public function register_meta_boxes()
@@ -44,6 +58,56 @@ class GSGCL_Admin
             'side',
             'default'
         );
+
+        add_meta_box(
+            'gsgcl_landing_sections',
+            __('Secciones de la landing', 'gsg-custom-landings'),
+            array($this, 'render_sections_metabox'),
+            'gsg_landing',
+            'normal',
+            'default'
+        );
+    }
+
+    public function enqueue_admin_assets($hook_suffix)
+    {
+        if (! in_array($hook_suffix, array('post.php', 'post-new.php'), true)) {
+            return;
+        }
+
+        $screen = get_current_screen();
+        if (! $screen || ! in_array($screen->post_type, array('gsg_landing', 'gsg_section'), true)) {
+            return;
+        }
+
+        wp_enqueue_script(
+            'gsgcl-admin',
+            GSGCL_URL . 'assets/js/gsgcl-admin.js',
+            array('jquery', 'jquery-ui-sortable'),
+            GSGCL_VERSION,
+            true
+        );
+
+        wp_localize_script(
+            'gsgcl-admin',
+            'gsgclAdmin',
+            array(
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'previewNonce' => wp_create_nonce('gsgcl_ajax_preview_section'),
+                'saveNonce' => wp_create_nonce('gsgcl_ajax_save_section'),
+                'restoreNonce' => wp_create_nonce('gsgcl_ajax_restore_section'),
+                'generateNonce' => wp_create_nonce('gsgcl_ajax_generate_proposals'),
+                'applyNonce' => wp_create_nonce('gsgcl_ajax_apply_proposal'),
+                'messages' => array(
+                    'previewUpdated' => __('Preview actualizado.', 'gsg-custom-landings'),
+                    'sectionSaved' => __('Sección guardada con revisión.', 'gsg-custom-landings'),
+                    'proposalApplied' => __('La propuesta fue aplicada.', 'gsg-custom-landings'),
+                    'revisionRestored' => __('La revisión fue restaurada.', 'gsg-custom-landings'),
+                    'proposalsGenerated' => __('Se generaron 3 propuestas.', 'gsg-custom-landings'),
+                    'error' => __('No se pudo completar la acción.', 'gsg-custom-landings'),
+                ),
+            )
+        );
     }
 
     public function get_default_meta_values()
@@ -51,6 +115,8 @@ class GSGCL_Admin
         return array(
             'gsgcl_content_type' => 'landing',
             'gsgcl_layout_variant' => 'referral',
+            'gsgcl_hide_theme_chrome' => '0',
+            'gsgcl_google_font_family' => 'Poppins',
             'gsgcl_hero_title' => 'Invita a un amigo',
             'gsgcl_hero_highlight' => 'y ambos ganan',
             'gsgcl_hero_description' => 'Estudiar en el extranjero es mejor cuando se comparte. Recomienda y obtén beneficios exclusivos.',
@@ -100,6 +166,13 @@ class GSGCL_Admin
 
         $content_type = get_post_meta($post->ID, 'gsgcl_content_type', true);
         $layout_variant = get_post_meta($post->ID, 'gsgcl_layout_variant', true);
+        $hide_theme_chrome = get_post_meta($post->ID, 'gsgcl_hide_theme_chrome', true);
+        $google_font_family = get_post_meta($post->ID, 'gsgcl_google_font_family', true);
+        if ('' === $google_font_family) {
+            $google_font_family = 'Poppins';
+        }
+        $font_presets = $this->get_google_font_presets();
+        $selected_font_preset = in_array($google_font_family, $font_presets, true) ? $google_font_family : '__custom__';
         ?>
         <table class="form-table" role="presentation">
             <tbody>
@@ -119,6 +192,30 @@ class GSGCL_Admin
                             <option value="referral" <?php selected($layout_variant, 'referral'); ?>><?php echo esc_html__('Referral', 'gsg-custom-landings'); ?></option>
                         </select>
                         <p class="description"><?php echo esc_html__('Cada landing expone un template dinámico con formato GSG Custom | {nombre}. Asigna el template a una página para publicarla.', 'gsg-custom-landings'); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html__('Header/Footer del theme', 'gsg-custom-landings'); ?></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="gsgcl_hide_theme_chrome" value="1" <?php checked($hide_theme_chrome, '1'); ?> />
+                            <?php echo esc_html__('Ocultar header y footer cuando esta landing use su template dinámico', 'gsg-custom-landings'); ?>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="gsgcl_google_font_family_preset"><?php echo esc_html__('Google Font', 'gsg-custom-landings'); ?></label></th>
+                    <td>
+                        <select id="gsgcl_google_font_family_preset" name="gsgcl_google_font_family_preset">
+                            <?php foreach ($font_presets as $font_name) : ?>
+                                <option value="<?php echo esc_attr($font_name); ?>" <?php selected($selected_font_preset, $font_name); ?>><?php echo esc_html($font_name); ?></option>
+                            <?php endforeach; ?>
+                            <option value="__custom__" <?php selected($selected_font_preset, '__custom__'); ?>><?php echo esc_html__('Custom', 'gsg-custom-landings'); ?></option>
+                        </select>
+                        <p>
+                            <input class="regular-text" type="text" id="gsgcl_google_font_family" name="gsgcl_google_font_family" value="<?php echo esc_attr($selected_font_preset === '__custom__' ? $google_font_family : ''); ?>" placeholder="Poppins" />
+                        </p>
+                        <p class="description"><?php echo esc_html__('Elige una fuente sugerida o escribe una fuente de Google Fonts personalizada. Por defecto: Poppins.', 'gsg-custom-landings'); ?></p>
                     </td>
                 </tr>
             </tbody>
@@ -236,6 +333,96 @@ class GSGCL_Admin
         <?php
     }
 
+    public function render_sections_metabox($post)
+    {
+        $schema = get_post_meta($post->ID, 'gsgcl_sections_schema', true);
+        $schema = is_array($schema) ? $schema : array();
+        $selected_ids = array();
+
+        foreach ($schema as $item) {
+            if (! empty($item['section_id'])) {
+                $selected_ids[] = absint($item['section_id']);
+            }
+        }
+
+        $sections = get_posts(
+            array(
+                'post_type' => 'gsg_section',
+                'post_status' => array('publish', 'draft', 'private'),
+                'numberposts' => -1,
+                'orderby' => 'title',
+                'order' => 'ASC',
+            )
+        );
+        ?>
+        <div class="gsgcl-landing-sections" data-target-input="gsgcl_sections_schema_json">
+            <p>
+                <label for="gsgcl_landing_reference_brief"><strong><?php echo esc_html__('Brief global de la landing', 'gsg-custom-landings'); ?></strong></label>
+                <textarea class="large-text" rows="3" id="gsgcl_landing_reference_brief" name="gsgcl_landing_reference_brief"><?php echo esc_textarea((string) get_post_meta($post->ID, 'gsgcl_landing_reference_brief', true)); ?></textarea>
+            </p>
+            <p>
+                <label for="gsgcl_landing_reference_image_url"><strong><?php echo esc_html__('Imagen global de referencia', 'gsg-custom-landings'); ?></strong></label>
+                <input class="large-text" type="url" id="gsgcl_landing_reference_image_url" name="gsgcl_landing_reference_image_url" value="<?php echo esc_attr((string) get_post_meta($post->ID, 'gsgcl_landing_reference_image_url', true)); ?>" placeholder="https://..." />
+            </p>
+            <p class="description"><?php echo esc_html__('Arma la landing como un rompecabezas: agrega secciones desde la biblioteca, ordénalas y guárdalas directamente en esta landing.', 'gsg-custom-landings'); ?></p>
+
+            <div class="gsgcl-sections-grid">
+                <div class="gsgcl-sections-panel">
+                    <h4><?php echo esc_html__('Biblioteca disponible', 'gsg-custom-landings'); ?></h4>
+                    <div class="gsgcl-section-library-list">
+                        <?php foreach ($sections as $section) : ?>
+                            <?php
+                            $section_id = $section->ID;
+                            $type = (string) get_post_meta($section_id, 'gsgcl_section_type', true);
+                            $variant = (string) get_post_meta($section_id, 'gsgcl_section_variant', true);
+                            $payload = $this->plugin->section_library()->get_section_editor_payload($section_id);
+                            ?>
+                            <div class="gsgcl-library-item" data-section-id="<?php echo esc_attr((string) $section_id); ?>" data-section-type="<?php echo esc_attr($type); ?>" data-section-variant="<?php echo esc_attr($variant); ?>" data-section-title="<?php echo esc_attr($section->post_title); ?>">
+                                <strong><?php echo esc_html($section->post_title); ?></strong>
+                                <span><?php echo esc_html($type . ' / ' . $variant); ?></span>
+                                <button type="button" class="button button-small gsgcl-add-section-button"><?php echo esc_html__('Agregar', 'gsg-custom-landings'); ?></button>
+                                <script type="application/json" class="gsgcl-library-item-json"><?php echo wp_json_encode($payload, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?></script>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div class="gsgcl-sections-panel">
+                    <h4><?php echo esc_html__('Orden actual de la landing', 'gsg-custom-landings'); ?></h4>
+                    <ul class="gsgcl-selected-sections" id="gsgcl-selected-sections">
+                        <?php foreach ($schema as $item) : ?>
+                            <?php
+                            $section_id = isset($item['section_id']) ? absint($item['section_id']) : 0;
+                            $section = $section_id ? get_post($section_id) : null;
+                            if (! $section || 'gsg_section' !== $section->post_type) {
+                                continue;
+                            }
+                            $type = (string) get_post_meta($section_id, 'gsgcl_section_type', true);
+                            $variant = (string) get_post_meta($section_id, 'gsgcl_section_variant', true);
+                            ?>
+                            <li class="gsgcl-selected-item" data-section-id="<?php echo esc_attr((string) $section_id); ?>">
+                                <span class="gsgcl-drag-handle">::</span>
+                                <div>
+                                    <strong><?php echo esc_html($section->post_title); ?></strong>
+                                    <span><?php echo esc_html($type . ' / ' . $variant); ?></span>
+                                </div>
+                                <button type="button" class="button-link-delete gsgcl-remove-section-button"><?php echo esc_html__('Quitar', 'gsg-custom-landings'); ?></button>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <input type="hidden" name="gsgcl_sections_schema_json" id="gsgcl_sections_schema_json" value="<?php echo esc_attr(wp_json_encode($schema)); ?>" />
+                </div>
+            </div>
+
+            <div class="gsgcl-inline-editors-wrap" id="gsgcl-inline-editors-wrap">
+                <?php foreach ($selected_ids as $section_id) : ?>
+                    <?php echo $this->plugin->section_library()->render_inline_editor($section_id); ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php
+    }
+
     public function save_landing_meta($post_id)
     {
         if (! isset($_POST['gsgcl_nonce']) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['gsgcl_nonce'])), 'gsgcl_save_landing')) {
@@ -253,7 +440,7 @@ class GSGCL_Admin
         $defaults = $this->get_default_meta_values();
 
         foreach (array_keys($defaults) as $meta_key) {
-            if ('gsgcl_openai_enabled' === $meta_key) {
+            if (in_array($meta_key, array('gsgcl_openai_enabled', 'gsgcl_hide_theme_chrome'), true)) {
                 update_post_meta($post_id, $meta_key, isset($_POST[$meta_key]) ? '1' : '0');
                 continue;
             }
@@ -266,6 +453,46 @@ class GSGCL_Admin
             $sanitized_value = $this->sanitize_meta_value($meta_key, $raw_value);
             update_post_meta($post_id, $meta_key, $sanitized_value);
         }
+
+        if (isset($_POST['gsgcl_sections_schema_json'])) {
+            $schema = $this->sanitize_sections_schema(wp_unslash($_POST['gsgcl_sections_schema_json']));
+            update_post_meta($post_id, 'gsgcl_sections_schema', $schema);
+            update_post_meta($post_id, 'gsgcl_section_ids', wp_list_pluck($schema, 'section_id'));
+        }
+
+        if (isset($_POST['gsgcl_landing_reference_brief'])) {
+            update_post_meta($post_id, 'gsgcl_landing_reference_brief', sanitize_textarea_field(wp_unslash($_POST['gsgcl_landing_reference_brief'])));
+        }
+
+        if (isset($_POST['gsgcl_landing_reference_image_url'])) {
+            update_post_meta($post_id, 'gsgcl_landing_reference_image_url', esc_url_raw(wp_unslash($_POST['gsgcl_landing_reference_image_url'])));
+        }
+    }
+
+    private function sanitize_sections_schema($raw_json)
+    {
+        $decoded = json_decode((string) $raw_json, true);
+        if (! is_array($decoded)) {
+            return array();
+        }
+
+        $sanitized = array();
+        $order = 1;
+
+        foreach ($decoded as $item) {
+            $section_id = isset($item['section_id']) ? absint($item['section_id']) : 0;
+            if (! $section_id || 'gsg_section' !== get_post_type($section_id)) {
+                continue;
+            }
+
+            $sanitized[] = array(
+                'section_id' => $section_id,
+                'order' => $order,
+            );
+            $order++;
+        }
+
+        return $sanitized;
     }
 
     private function sanitize_meta_value($meta_key, $value)
@@ -303,6 +530,20 @@ class GSGCL_Admin
             return 'referral';
         }
 
+        if ('gsgcl_google_font_family' === $meta_key) {
+            $value = preg_replace('/[^A-Za-z0-9\s_-]/', '', (string) $value);
+            $value = trim(preg_replace('/\s+/', ' ', (string) $value));
+
+            if (! $value && isset($_POST['gsgcl_google_font_family_preset'])) {
+                $preset = sanitize_text_field(wp_unslash($_POST['gsgcl_google_font_family_preset']));
+                if ('__custom__' !== $preset) {
+                    $value = $preset;
+                }
+            }
+
+            return $value ? $value : 'Poppins';
+        }
+
         if ('gsgcl_submission_hook' === $meta_key) {
             return sanitize_key($value);
         }
@@ -320,5 +561,10 @@ class GSGCL_Admin
         }
 
         return sanitize_text_field($value);
+    }
+
+    private function get_google_font_presets()
+    {
+        return $this->google_font_presets;
     }
 }

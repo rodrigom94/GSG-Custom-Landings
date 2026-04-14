@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Generación de propuestas de secciones conectada a OpenAI con fallback local seguro.
+- Selector de modelo IA en ajustes con `gpt-5.4` como valor por defecto.
+- Soporte de referencia visual por imagen en el contexto enviado al generador de propuestas.
+
 ## v1.1.0 - 2026-04-14
 
 - Release inicial del plugin GSG Custom Landings.

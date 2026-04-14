@@ -282,9 +282,39 @@ class GSGCL_Renderer
 
     private function render_section($section, $config, $landing_id, $page_id, $notice_type, $notice_message)
     {
-        $type = isset($section['type']) ? $section['type'] : 'generic';
         $variant = isset($section['variant']) ? $section['variant'] : '';
 
+        if ('referral-split-v1' === $variant) {
+            $this->render_hero_section($config);
+            return;
+        }
+
+        if ('benefit-highlight-v1' === $variant) {
+            $this->render_counter_section($config);
+            return;
+        }
+
+        if ('dual-card-v1' === $variant) {
+            $this->render_benefits_section($config);
+            return;
+        }
+
+        if ('two-column-referral-v1' === $variant) {
+            $this->render_form_section($config, $landing_id, $page_id, $notice_type, $notice_message);
+            return;
+        }
+
+        if ('support-panel-v1' === $variant) {
+            $this->render_cta_section($config);
+            return;
+        }
+
+        if ('steps-3-v1' === $variant) {
+            $this->render_steps_section($config);
+            return;
+        }
+
+        $type = isset($section['type']) ? $section['type'] : 'generic';
         if ('hero' === $type) {
             $this->render_hero_section($config);
             return;
@@ -307,11 +337,6 @@ class GSGCL_Renderer
 
         if ('cta' === $type) {
             $this->render_cta_section($config);
-            return;
-        }
-
-        if ('generic' === $type && 'steps-3-v1' === $variant) {
-            $this->render_steps_section($config);
             return;
         }
 

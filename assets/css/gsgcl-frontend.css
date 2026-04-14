@@ -10,7 +10,7 @@
     --gsgcl-border: rgba(17, 75, 162, 0.18);
     --gsgcl-shadow: 0 24px 70px rgba(16, 61, 146, 0.16);
     color: var(--gsgcl-text);
-    font-family: "Montserrat", "Segoe UI", sans-serif;
+    font-family: var(--gsgcl-font-family, "Poppins", "Segoe UI", sans-serif);
     margin: 0;
     background:
         radial-gradient(circle at top left, rgba(255, 193, 7, 0.12), transparent 24%),
