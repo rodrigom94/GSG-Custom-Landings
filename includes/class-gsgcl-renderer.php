@@ -458,7 +458,7 @@ class GSGCL_Renderer
                     'body' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_step_3_body', ''),
                 ),
             ),
-            'form_heading' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_form_heading', ''),
+            'form_heading' => $this->normalize_form_heading($this->plugin->get_landing_meta($landing_id, 'gsgcl_form_heading', '')),
             'form_description' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_form_description', ''),
             'success_message' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_success_message', ''),
             'error_message' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_error_message', ''),
@@ -478,6 +478,11 @@ class GSGCL_Renderer
         }
 
         return $url ? $url : '#';
+    }
+
+    private function normalize_form_heading($value)
+    {
+        return 'Registra tu amigo' === trim((string) $value) ? 'Registra a tu amigo' : $value;
     }
 
     private function explode_lines($value)

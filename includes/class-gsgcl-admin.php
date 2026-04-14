@@ -144,7 +144,7 @@ class GSGCL_Admin
             'gsgcl_step_2_body' => 'Nuestro equipo le brindará una orientación personalizada sobre estudios en el extranjero.',
             'gsgcl_step_3_title' => 'Recibes tu beneficio',
             'gsgcl_step_3_body' => 'Si tu amigo inicia su proceso, activamos tu 20% de descuento de inmediato.',
-            'gsgcl_form_heading' => 'Registra tu amigo',
+            'gsgcl_form_heading' => 'Registra a tu amigo',
             'gsgcl_form_description' => 'Completa los datos y nosotros nos encargamos del resto.',
             'gsgcl_success_message' => 'Gracias. Recibimos tu registro y nuestro equipo revisará el caso pronto.',
             'gsgcl_error_message' => 'No pudimos procesar tu registro. Revisa los datos e intenta nuevamente.',

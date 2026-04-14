@@ -851,10 +851,7 @@ class GSGCL_Section_Library
             <a href="#gsgcl-benefit">Ver beneficio</a>
         </div>
     </div>
-    <div class="gsgcl-demo-hero__visual">
-        <strong>USA</strong>
-        <strong>UK</strong>
-    </div>
+    <div class="gsgcl-demo-hero__visual"></div>
 </section>',
             ),
             array(
@@ -909,7 +906,7 @@ class GSGCL_Section_Library
                 'brief' => 'Formulario principal de registro con datos del amigo y del estudiante que recomienda.',
                 'preview_html' => '
 <section class="gsgcl-section-preview gsgcl-demo-form">
-    <h2>Registra tu amigo</h2>
+    <h2>Registra a tu amigo</h2>
     <form>
         <input type="text" name="friend_name" placeholder="Nombre" />
         <input type="text" name="friend_last_name" placeholder="Apellido" />

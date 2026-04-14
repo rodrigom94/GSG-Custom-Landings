@@ -537,26 +537,49 @@
     border: 0;
     cursor: pointer;
     font-size: 1.05rem;
+    color: #fff;
+    background: linear-gradient(90deg, var(--gsgcl-blue-deep), #2c3543);
+    box-shadow: 0 16px 30px rgba(16, 61, 146, 0.18);
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .gsgcl-field-grid__full {
     grid-column: 1 / -1;
 }
 
-.gsgcl-field-grid input,
-.gsgcl-field-grid textarea {
+.gsgcl-form .gsgcl-field-grid input,
+.gsgcl-form .gsgcl-field-grid textarea,
+.gsgcl-form .gsgcl-field-grid select {
     width: 100%;
     padding: 12px 14px;
     border: 1px solid var(--gsgcl-border);
     border-radius: 12px;
     background: #fff;
+    color: var(--gsgcl-text);
+    font-family: var(--gsgcl-font-family, "Poppins", "Segoe UI", sans-serif);
+    font-size: var(--gsgcl-fs-body);
+    font-weight: 400;
+    line-height: var(--gsgcl-lh-body);
+    box-shadow: none;
 }
 
-.gsgcl-field-grid input:focus,
-.gsgcl-field-grid textarea:focus {
+.gsgcl-form .gsgcl-field-grid input::placeholder,
+.gsgcl-form .gsgcl-field-grid textarea::placeholder {
+    color: rgba(79, 100, 127, 0.78);
+}
+
+.gsgcl-form .gsgcl-field-grid input:focus,
+.gsgcl-form .gsgcl-field-grid textarea:focus,
+.gsgcl-form .gsgcl-field-grid select:focus {
     outline: 0;
     border-color: var(--gsgcl-blue);
     box-shadow: 0 0 0 3px rgba(13, 92, 192, 0.12);
+}
+
+.gsgcl-form .gsgcl-field-grid label span {
+    font-weight: 500;
+    color: #24456f;
 }
 
 .gsgcl-notice {
