@@ -120,6 +120,10 @@
 }
 
 .gsgcl-hero__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
     background: linear-gradient(180deg, #0f66cd 0%, #0953ac 100%);
     color: #fff;
     padding: 52px 42px;
@@ -139,7 +143,7 @@
 }
 
 .gsgcl-hero__description {
-    margin: 20px 0 0;
+    margin: 0;
     max-width: 30rem;
     font-size: var(--gsgcl-fs-body);
     line-height: var(--gsgcl-lh-body);
@@ -149,7 +153,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
-    margin-top: 28px;
+    margin-top: 4px;
+    align-items: center;
 }
 
 .gsgcl-button {
