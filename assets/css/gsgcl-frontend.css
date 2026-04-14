@@ -6,9 +6,9 @@ html {
 .gsgcl-standalone-template {
     margin: 0;
     background:
-        radial-gradient(circle at top left, rgba(255, 193, 7, 0.12), transparent 24%),
-        radial-gradient(circle at top right, rgba(13, 92, 192, 0.1), transparent 18%),
-        linear-gradient(180deg, #f8fbff 0%, #ebf3ff 100%);
+    radial-gradient(circle at top left, rgba(255, 198, 0, 0.14), transparent 24%),
+    radial-gradient(circle at top right, rgba(171, 227, 228, 0.18), transparent 18%),
+    linear-gradient(180deg, #eaf0fe 0%, #8ec0e5 100%);
 }
 
 .gsgcl-standalone-template.admin-bar {
@@ -16,13 +16,17 @@ html {
 }
 
 .gsgcl-shell {
-    --gsgcl-blue: #0d5cc0;
-    --gsgcl-blue-deep: #103d92;
-    --gsgcl-yellow: #ffc107;
-    --gsgcl-yellow-soft: #ffd860;
+    --gsgcl-blue: #397dc9;
+    --gsgcl-blue-deep: #0d3e9f;
+    --gsgcl-yellow: #ffc600;
+    --gsgcl-yellow-soft: #ffd54d;
+    --gsgcl-sky-blue: #eaf0fe;
+    --gsgcl-sky-blue-deep: #8ec0e5;
+    --gsgcl-cyan-soft: #abe3e4;
+    --gsgcl-gray-dark: #22282b;
     --gsgcl-surface: #ffffff;
-    --gsgcl-surface-alt: #f3f7ff;
-    --gsgcl-text: #173052;
+    --gsgcl-surface-alt: #eaf0fe;
+    --gsgcl-text: #22282b;
     --gsgcl-text-soft: #4f647f;
     --gsgcl-border: rgba(17, 75, 162, 0.18);
     --gsgcl-shadow: 0 24px 70px rgba(16, 61, 146, 0.16);
@@ -52,9 +56,9 @@ html {
     line-height: var(--gsgcl-lh-body);
     margin: 0;
     background:
-        radial-gradient(circle at top left, rgba(255, 193, 7, 0.12), transparent 24%),
-        radial-gradient(circle at top right, rgba(13, 92, 192, 0.1), transparent 18%),
-        linear-gradient(180deg, #f8fbff 0%, #ebf3ff 100%);
+        radial-gradient(circle at top left, rgba(255, 198, 0, 0.14), transparent 24%),
+        radial-gradient(circle at top right, rgba(171, 227, 228, 0.18), transparent 18%),
+        linear-gradient(180deg, #eaf0fe 0%, #8ec0e5 100%);
 }
 
 /* ── Global typography cascade ─────────────────────────── */
@@ -134,7 +138,7 @@ html {
     flex-direction: column;
     justify-content: center;
     gap: 20px;
-    background: linear-gradient(180deg, #0f66cd 0%, #0953ac 100%);
+    background: linear-gradient(180deg, #397dc9 0%, #0d3e9f 100%);
     color: #fff;
     padding: 52px 42px;
 }
@@ -197,7 +201,7 @@ html {
 
 .gsgcl-button--accent {
     background: var(--gsgcl-yellow);
-    color: #132038;
+    color: var(--gsgcl-gray-dark);
     box-shadow: 0 10px 30px rgba(255, 193, 7, 0.26);
 }
 
@@ -234,7 +238,7 @@ html {
 .gsgcl-hero__visual {
     position: relative;
     min-height: 430px;
-    background: linear-gradient(135deg, rgba(13, 92, 192, 0.16), rgba(255, 193, 7, 0.08));
+    background: linear-gradient(135deg, rgba(57, 125, 201, 0.18), rgba(171, 227, 228, 0.18));
 }
 
 .gsgcl-hero__image {
@@ -478,7 +482,7 @@ html {
 .gsgcl-reasons h2,
 .gsgcl-help-card h3 {
     margin: 0;
-    color: #16345d;
+    color: var(--gsgcl-gray-dark);
 }
 
 .gsgcl-card p,
@@ -519,7 +523,7 @@ html {
     margin-bottom: 18px;
     border-radius: 50%;
     background: var(--gsgcl-yellow);
-    color: var(--gsgcl-blue-deep);
+    color: var(--gsgcl-gray-dark);
     font-weight: 800;
     font-size: 1.3rem;
     box-shadow: 0 6px 18px rgba(13, 92, 192, 0.12);
@@ -655,7 +659,7 @@ html {
 
 .gsgcl-form .gsgcl-field-grid label span {
     font-weight: 500;
-    color: #24456f;
+    color: var(--gsgcl-gray-dark);
 }
 
 .gsgcl-notice {
@@ -694,7 +698,7 @@ html {
     padding: 34px 32px;
     border-radius: 24px;
     color: #fff;
-    background: linear-gradient(135deg, var(--gsgcl-blue-deep), #1c61c7);
+    background: linear-gradient(135deg, var(--gsgcl-blue-deep), var(--gsgcl-blue));
     box-shadow: var(--gsgcl-shadow);
 }
 
