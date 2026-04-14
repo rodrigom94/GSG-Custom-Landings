@@ -569,6 +569,12 @@ html {
     -webkit-appearance: none;
 }
 
+.gsgcl-button--submit:hover,
+.gsgcl-button--submit:focus,
+.gsgcl-button--submit:active {
+    color: #fff !important;
+}
+
 .gsgcl-field-grid__full {
     grid-column: 1 / -1;
 }
