@@ -188,14 +188,29 @@ html {
     transform: translateY(-1px);
 }
 
-.gsgcl-shell .gsgcl-button:not(:hover):not(:active):not(.has-text-color),
-.gsgcl-shell button:not(:hover):not(:active):not(.has-text-color),
-.gsgcl-shell input[type=submit]:not(:hover):not(:active):not(.has-text-color),
-.gsgcl-shell input[type=reset]:not(:hover):not(:active):not(.has-text-color),
-.gsgcl-shell .button:not(:hover):not(:active):not(.has-text-color),
-.gsgcl-shell .wp-block-search .wp-block-search__button:not(:hover):not(:active):not(.has-text-color),
-.gsgcl-shell .wp-block-button .wp-block-button__link:not(:hover):not(:active):not(.has-text-color),
-.gsgcl-shell .wp-block-file a.wp-block-file__button:not(:hover):not(:active):not(.has-text-color) {
+.gsgcl-shell .gsgcl-button--accent,
+.gsgcl-shell .gsgcl-button--accent:hover,
+.gsgcl-shell .gsgcl-button--accent:focus,
+.gsgcl-shell .gsgcl-button--accent:active,
+.gsgcl-shell .gsgcl-button--ghost,
+.gsgcl-shell .gsgcl-button--ghost:hover,
+.gsgcl-shell .gsgcl-button--ghost:focus,
+.gsgcl-shell .gsgcl-button--ghost:active {
+    color: #000 !important;
+}
+
+.gsgcl-shell .gsgcl-button--primary,
+.gsgcl-shell .gsgcl-button--primary:hover,
+.gsgcl-shell .gsgcl-button--primary:focus,
+.gsgcl-shell .gsgcl-button--primary:active,
+.gsgcl-shell .gsgcl-button--submit,
+.gsgcl-shell .gsgcl-button--submit:hover,
+.gsgcl-shell .gsgcl-button--submit:focus,
+.gsgcl-shell .gsgcl-button--submit:active,
+.gsgcl-shell .gsgcl-button--whatsapp,
+.gsgcl-shell .gsgcl-button--whatsapp:hover,
+.gsgcl-shell .gsgcl-button--whatsapp:focus,
+.gsgcl-shell .gsgcl-button--whatsapp:active {
     color: #fff !important;
 }
 
