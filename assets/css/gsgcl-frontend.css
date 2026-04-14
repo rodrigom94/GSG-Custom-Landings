@@ -1,3 +1,8 @@
+.gsgcl-standalone-template,
+html {
+    scroll-behavior: smooth;
+}
+
 .gsgcl-standalone-template {
     margin: 0;
     background:
@@ -193,7 +198,12 @@
 
 .gsgcl-button--ghost {
     background: #ffffff;
-    color: var(--gsgcl-blue-deep);
+    color: #000;
+}
+
+.gsgcl-hero__actions .gsgcl-button--accent,
+.gsgcl-hero__actions .gsgcl-button--ghost {
+    color: #000 !important;
 }
 
 .gsgcl-button--primary {
@@ -467,7 +477,6 @@
     color: var(--gsgcl-blue-deep);
     font-weight: 800;
     font-size: 1.3rem;
-    border: 3px solid var(--gsgcl-blue);
     box-shadow: 0 6px 18px rgba(13, 92, 192, 0.12);
 }
 
