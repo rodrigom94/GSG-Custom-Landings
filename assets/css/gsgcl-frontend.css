@@ -169,13 +169,15 @@
     transform: translateY(-1px);
 }
 
-.site .gsgcl-shell .gsgcl-button:not(:hover):not(:active):not(.has-text-color),
-.site .gsgcl-shell button:not(:hover):not(:active):not(.has-text-color),
-.site .gsgcl-shell input[type=submit]:not(:hover):not(:active):not(.has-text-color),
+.gsgcl-shell .gsgcl-button:not(:hover):not(:active):not(.has-text-color),
+.gsgcl-shell button:not(:hover):not(:active):not(.has-text-color),
+.gsgcl-shell input[type=submit]:not(:hover):not(:active):not(.has-text-color),
+.gsgcl-shell input[type=reset]:not(:hover):not(:active):not(.has-text-color),
+.gsgcl-shell .button:not(:hover):not(:active):not(.has-text-color),
 .gsgcl-shell .wp-block-search .wp-block-search__button:not(:hover):not(:active):not(.has-text-color),
 .gsgcl-shell .wp-block-button .wp-block-button__link:not(:hover):not(:active):not(.has-text-color),
 .gsgcl-shell .wp-block-file a.wp-block-file__button:not(:hover):not(:active):not(.has-text-color) {
-    color: #fff;
+    color: #fff !important;
 }
 
 .gsgcl-button--accent {
