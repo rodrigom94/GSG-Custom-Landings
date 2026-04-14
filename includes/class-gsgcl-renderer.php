@@ -227,6 +227,8 @@ class GSGCL_Renderer
 
     private function render_hero_section($config)
     {
+        $hero_image_url = $this->normalize_hero_image_url(isset($config['hero_image_url']) ? $config['hero_image_url'] : '');
+        $hero_image_class = $this->is_demo_hero_banner($hero_image_url) ? ' gsgcl-hero__image--demo-banner' : '';
         ?>
         <section class="gsgcl-hero">
             <div class="gsgcl-wrap gsgcl-hero__grid">
@@ -242,7 +244,7 @@ class GSGCL_Renderer
                     </div>
                 </div>
                 <div class="gsgcl-hero__visual">
-                    <div class="gsgcl-hero__image" style="background-image:url('<?php echo esc_url($config['hero_image_url']); ?>');"></div>
+                    <div class="gsgcl-hero__image<?php echo esc_attr($hero_image_class); ?>" style="background-image:url('<?php echo esc_url($hero_image_url); ?>');"></div>
                 </div>
             </div>
         </section>
@@ -425,7 +427,7 @@ class GSGCL_Renderer
             'primary_cta_url' => $this->normalize_front_url($this->plugin->get_landing_meta($landing_id, 'gsgcl_primary_cta_url', '#gsgcl-form')),
             'secondary_cta_label' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_secondary_cta_label', ''),
             'secondary_cta_url' => $this->normalize_front_url($this->plugin->get_landing_meta($landing_id, 'gsgcl_secondary_cta_url', '#gsgcl-benefit')),
-            'hero_image_url' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_hero_image_url', ''),
+            'hero_image_url' => $this->normalize_hero_image_url($this->plugin->get_landing_meta($landing_id, 'gsgcl_hero_image_url', '')),
             'hero_badge_primary' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_hero_badge_primary', ''),
             'hero_badge_secondary' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_hero_badge_secondary', ''),
             'benefit_heading' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_benefit_heading', ''),
@@ -483,6 +485,24 @@ class GSGCL_Renderer
     private function normalize_form_heading($value)
     {
         return 'Registra tu amigo' === trim((string) $value) ? 'Registra a tu amigo' : $value;
+    }
+
+    private function normalize_hero_image_url($value)
+    {
+        $value = trim((string) $value);
+        $legacy_demo_url = 'https://images.unsplash.com/photo-1505764706515-aa95265c5abc?auto=format&fit=crop&w=1200&q=80';
+        $demo_banner_url = GSGCL_URL . 'assets/demo-images/Banner 1800x600 px-100.jpg';
+
+        if ('' === $value || $legacy_demo_url === $value) {
+            return $demo_banner_url;
+        }
+
+        return $value;
+    }
+
+    private function is_demo_hero_banner($value)
+    {
+        return false !== strpos((string) $value, 'assets/demo-images/Banner 1800x600 px-100.jpg');
     }
 
     private function explode_lines($value)

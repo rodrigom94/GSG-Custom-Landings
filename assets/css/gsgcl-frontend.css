@@ -244,15 +244,21 @@ html {
     background-position: center;
 }
 
+.gsgcl-hero__image--demo-banner {
+    background-image: url("../demo-images/Banner 1800x600 px-100.jpg") !important;
+    background-position: center right;
+}
+
 .gsgcl-hero__visual::after {
     content: "";
     position: absolute;
-    inset: auto 10% 15% auto;
-    width: 160px;
-    height: 160px;
-    border: 28px solid rgba(255, 193, 7, 0.82);
-    border-left-color: transparent;
-    border-radius: 50%;
+    right: -8%;
+    bottom: -16%;
+    width: 340px;
+    height: 340px;
+    background: url("../demo-images/Aro cyan@2x.png") center/contain no-repeat;
+    opacity: 0.9;
+    pointer-events: none;
 }
 
 .gsgcl-badge {
@@ -282,6 +288,36 @@ html {
 .gsgcl-form-section,
 .gsgcl-reasons {
     padding: 34px 0;
+}
+
+.gsgcl-benefit,
+.gsgcl-steps {
+    position: relative;
+    overflow: hidden;
+}
+
+.gsgcl-benefit::after {
+    content: "";
+    position: absolute;
+    right: -10%;
+    top: 18%;
+    width: 420px;
+    height: 420px;
+    background: url("../demo-images/Aro amarillo@2x.png") center/contain no-repeat;
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+.gsgcl-steps::before {
+    content: "";
+    position: absolute;
+    left: -9%;
+    top: -6%;
+    width: 320px;
+    height: 320px;
+    background: url("../demo-images/Aro cyan@2x.png") center/contain no-repeat;
+    opacity: 0.32;
+    pointer-events: none;
 }
 
 .gsgcl-benefit--counter-only {
@@ -385,6 +421,8 @@ html {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
+    position: relative;
+    z-index: 1;
 }
 
 .gsgcl-card {
@@ -461,6 +499,8 @@ html {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
+    position: relative;
+    z-index: 1;
 }
 
 .gsgcl-step {
@@ -719,12 +759,31 @@ html {
         min-height: 360px;
     }
 
+    .gsgcl-benefit::after {
+        width: 320px;
+        height: 320px;
+        right: -14%;
+        top: 24%;
+    }
+
+    .gsgcl-steps::before {
+        width: 240px;
+        height: 240px;
+        left: -12%;
+        top: -2%;
+    }
+
     .gsgcl-field-grid {
         grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 640px) {
+    .gsgcl-hero__image--demo-banner {
+        background-image: url("../demo-images/Banner 800x1000px-100.jpg") !important;
+        background-position: center top;
+    }
+
     .gsgcl-wrap {
         width: min(100% - 24px, 1180px);
     }
@@ -742,6 +801,29 @@ html {
     .gsgcl-help-card {
         padding-left: 20px;
         padding-right: 20px;
+    }
+
+    .gsgcl-hero__visual::after {
+        width: 220px;
+        height: 220px;
+        right: -12%;
+        bottom: -10%;
+    }
+
+    .gsgcl-benefit::after {
+        width: 220px;
+        height: 220px;
+        right: -20%;
+        top: 28%;
+        opacity: 0.9;
+    }
+
+    .gsgcl-steps::before {
+        width: 180px;
+        height: 180px;
+        left: -14%;
+        top: -2%;
+        opacity: 0.22;
     }
 
     .gsgcl-badge--primary {

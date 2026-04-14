@@ -851,7 +851,7 @@ class GSGCL_Section_Library
             <a href="#gsgcl-benefit">Ver beneficio</a>
         </div>
     </div>
-    <div class="gsgcl-demo-hero__visual"></div>
+    <div class="gsgcl-demo-hero__visual" style="background-image:url(' . esc_url(GSGCL_URL . 'assets/demo-images/Banner 1800x600 px-100.jpg') . ');"></div>
 </section>',
             ),
             array(

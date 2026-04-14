@@ -125,7 +125,7 @@ class GSGCL_Admin
             'gsgcl_primary_cta_url' => '#gsgcl-form',
             'gsgcl_secondary_cta_label' => 'Ver beneficio',
             'gsgcl_secondary_cta_url' => '#gsgcl-benefit',
-            'gsgcl_hero_image_url' => 'https://images.unsplash.com/photo-1505764706515-aa95265c5abc?auto=format&fit=crop&w=1200&q=80',
+            'gsgcl_hero_image_url' => GSGCL_URL . 'assets/demo-images/Banner 1800x600 px-100.jpg',
             'gsgcl_hero_badge_primary' => 'USA',
             'gsgcl_hero_badge_secondary' => 'UK',
             'gsgcl_benefit_heading' => '¿Cuál es el beneficio?',
