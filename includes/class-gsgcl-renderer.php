@@ -76,8 +76,9 @@ class GSGCL_Renderer
             $this->render_landing_legacy($config, $landing_id, $page_id, $notice_type, $notice_message);
             return;
         }
+        $ds_class = empty($config['design_system']) ? ' gsgcl-ds-none' : '';
         ?>
-        <div class="gsgcl-shell gsgcl-shell--sections gsgcl-variant-<?php echo esc_attr($config['layout_variant']); ?>">
+        <div class="gsgcl-shell gsgcl-shell--sections gsgcl-variant-<?php echo esc_attr($config['layout_variant']); ?><?php echo esc_attr($ds_class); ?>">
             <?php foreach ($sections as $section) : ?>
                 <?php $this->render_section($section, $config, $landing_id, $page_id, $notice_type, $notice_message); ?>
             <?php endforeach; ?>
@@ -87,8 +88,9 @@ class GSGCL_Renderer
 
     private function render_landing_legacy($config, $landing_id, $page_id, $notice_type, $notice_message)
     {
+        $ds_class = empty($config['design_system']) ? ' gsgcl-ds-none' : '';
         ?>
-        <div class="gsgcl-shell gsgcl-variant-<?php echo esc_attr($config['layout_variant']); ?>">
+        <div class="gsgcl-shell gsgcl-variant-<?php echo esc_attr($config['layout_variant']); ?><?php echo esc_attr($ds_class); ?>">
             <?php $this->render_hero_section($config); ?>
             <?php $this->render_counter_section($config); ?>
             <?php $this->render_benefits_section($config); ?>
@@ -229,7 +231,6 @@ class GSGCL_Renderer
         <section class="gsgcl-hero">
             <div class="gsgcl-wrap gsgcl-hero__grid">
                 <div class="gsgcl-hero__content">
-                    <p class="gsgcl-kicker"><?php echo esc_html(ucfirst($config['content_type'])); ?></p>
                     <h1 class="gsgcl-hero__title">
                         <?php echo esc_html($config['hero_title']); ?>
                         <span><?php echo esc_html($config['hero_highlight']); ?></span>
@@ -242,8 +243,6 @@ class GSGCL_Renderer
                 </div>
                 <div class="gsgcl-hero__visual">
                     <div class="gsgcl-hero__image" style="background-image:url('<?php echo esc_url($config['hero_image_url']); ?>');"></div>
-                    <div class="gsgcl-badge gsgcl-badge--primary"><?php echo esc_html($config['hero_badge_primary']); ?></div>
-                    <div class="gsgcl-badge gsgcl-badge--secondary"><?php echo esc_html($config['hero_badge_secondary']); ?></div>
                 </div>
             </div>
         </section>
@@ -418,6 +417,7 @@ class GSGCL_Renderer
         return array(
             'content_type' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_content_type', 'landing'),
             'layout_variant' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_layout_variant', 'referral'),
+            'design_system' => '1' === $this->plugin->get_landing_meta($landing_id, 'gsgcl_design_system', '1'),
             'hero_title' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_hero_title', ''),
             'hero_highlight' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_hero_highlight', ''),
             'hero_description' => $this->plugin->get_landing_meta($landing_id, 'gsgcl_hero_description', ''),

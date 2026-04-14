@@ -116,6 +116,7 @@ class GSGCL_Admin
             'gsgcl_content_type' => 'landing',
             'gsgcl_layout_variant' => 'referral',
             'gsgcl_hide_theme_chrome' => '0',
+            'gsgcl_design_system' => '1',
             'gsgcl_google_font_family' => 'Poppins',
             'gsgcl_hero_title' => 'Invita a un amigo',
             'gsgcl_hero_highlight' => 'y ambos ganan',
@@ -216,6 +217,15 @@ class GSGCL_Admin
                             <input class="regular-text" type="text" id="gsgcl_google_font_family" name="gsgcl_google_font_family" value="<?php echo esc_attr($selected_font_preset === '__custom__' ? $google_font_family : ''); ?>" placeholder="Poppins" />
                         </p>
                         <p class="description"><?php echo esc_html__('Elige una fuente sugerida o escribe una fuente de Google Fonts personalizada. Por defecto: Poppins.', 'gsg-custom-landings'); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html__('Sistema de diseño', 'gsg-custom-landings'); ?></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="gsgcl_design_system" value="1" <?php checked(get_post_meta($post->ID, 'gsgcl_design_system', true), '1'); ?> />
+                            <?php echo esc_html__('Aplicar tipografía global (h1-h4, p, li) del sistema de diseño. Desmarcar para usar estilos propios de cada sección.', 'gsg-custom-landings'); ?>
+                        </label>
                     </td>
                 </tr>
             </tbody>
@@ -440,7 +450,7 @@ class GSGCL_Admin
         $defaults = $this->get_default_meta_values();
 
         foreach (array_keys($defaults) as $meta_key) {
-            if (in_array($meta_key, array('gsgcl_openai_enabled', 'gsgcl_hide_theme_chrome'), true)) {
+            if (in_array($meta_key, array('gsgcl_openai_enabled', 'gsgcl_hide_theme_chrome', 'gsgcl_design_system'), true)) {
                 update_post_meta($post_id, $meta_key, isset($_POST[$meta_key]) ? '1' : '0');
                 continue;
             }

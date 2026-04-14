@@ -21,13 +21,79 @@
     --gsgcl-text-soft: #4f647f;
     --gsgcl-border: rgba(17, 75, 162, 0.18);
     --gsgcl-shadow: 0 24px 70px rgba(16, 61, 146, 0.16);
+
+    /* ── Design-system typography tokens ─────────────────── */
+    --gsgcl-fs-h1: clamp(2rem, 4.5vw, 2.5rem);
+    --gsgcl-fw-h1: 600;
+    --gsgcl-lh-h1: 1.1;
+    --gsgcl-fs-h2: clamp(1.5rem, 3.5vw, 2rem);
+    --gsgcl-fw-h2: 500;
+    --gsgcl-lh-h2: 1.2;
+    --gsgcl-fs-h3: 1.125rem;
+    --gsgcl-fw-h3: 600;
+    --gsgcl-lh-h3: 1.25;
+    --gsgcl-fs-h4: 1rem;
+    --gsgcl-fw-h4: 600;
+    --gsgcl-lh-h4: 1.3;
+    --gsgcl-fs-body: 1rem;
+    --gsgcl-fw-body: 400;
+    --gsgcl-lh-body: 1.3;
+    --gsgcl-fs-small: 0.875rem;
+
     color: var(--gsgcl-text);
     font-family: var(--gsgcl-font-family, "Poppins", "Segoe UI", sans-serif);
+    font-size: var(--gsgcl-fs-body);
+    font-weight: var(--gsgcl-fw-body);
+    line-height: var(--gsgcl-lh-body);
     margin: 0;
     background:
         radial-gradient(circle at top left, rgba(255, 193, 7, 0.12), transparent 24%),
         radial-gradient(circle at top right, rgba(13, 92, 192, 0.1), transparent 18%),
         linear-gradient(180deg, #f8fbff 0%, #ebf3ff 100%);
+}
+
+/* ── Global typography cascade ─────────────────────────── */
+.gsgcl-shell h1 {
+    font-size: var(--gsgcl-fs-h1);
+    font-weight: var(--gsgcl-fw-h1);
+    line-height: var(--gsgcl-lh-h1);
+}
+
+.gsgcl-shell h2 {
+    font-size: var(--gsgcl-fs-h2);
+    font-weight: var(--gsgcl-fw-h2);
+    line-height: var(--gsgcl-lh-h2);
+}
+
+.gsgcl-shell h3 {
+    font-size: var(--gsgcl-fs-h3);
+    font-weight: var(--gsgcl-fw-h3);
+    line-height: var(--gsgcl-lh-h3);
+}
+
+.gsgcl-shell h4 {
+    font-size: var(--gsgcl-fs-h4);
+    font-weight: var(--gsgcl-fw-h4);
+    line-height: var(--gsgcl-lh-h4);
+}
+
+.gsgcl-shell p,
+.gsgcl-shell li {
+    font-size: var(--gsgcl-fs-body);
+    font-weight: var(--gsgcl-fw-body);
+    line-height: var(--gsgcl-lh-body);
+}
+
+/* Opt-out: sections can override with .gsgcl-ds-none */
+.gsgcl-shell .gsgcl-ds-none h1,
+.gsgcl-shell .gsgcl-ds-none h2,
+.gsgcl-shell .gsgcl-ds-none h3,
+.gsgcl-shell .gsgcl-ds-none h4,
+.gsgcl-shell .gsgcl-ds-none p,
+.gsgcl-shell .gsgcl-ds-none li {
+    font-size: revert;
+    font-weight: revert;
+    line-height: revert;
 }
 
 .gsgcl-shell * {
@@ -59,19 +125,12 @@
     padding: 52px 42px;
 }
 
-.gsgcl-kicker {
-    margin: 0 0 14px;
-    color: rgba(255, 255, 255, 0.82);
-    font-size: 0.8rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-}
-
 .gsgcl-hero__title {
     margin: 0;
-    font-size: clamp(2.1rem, 5vw, 3.35rem);
-    line-height: 1;
-    letter-spacing: -0.04em;
+    font-size: var(--gsgcl-fs-h1);
+    font-weight: var(--gsgcl-fw-h1);
+    line-height: var(--gsgcl-lh-h1);
+    letter-spacing: -0.02em;
 }
 
 .gsgcl-hero__title span {
@@ -82,8 +141,8 @@
 .gsgcl-hero__description {
     margin: 20px 0 0;
     max-width: 30rem;
-    font-size: 1.08rem;
-    line-height: 1.65;
+    font-size: var(--gsgcl-fs-body);
+    line-height: var(--gsgcl-lh-body);
 }
 
 .gsgcl-hero__actions {
@@ -262,7 +321,8 @@
 .gsgcl-section-header h2 {
     margin: 0;
     color: var(--gsgcl-blue);
-    font-size: clamp(2rem, 4vw, 2.6rem);
+    font-size: var(--gsgcl-fs-h2);
+    font-weight: var(--gsgcl-fw-h2);
 }
 
 .gsgcl-offer {
@@ -286,7 +346,8 @@
 .gsgcl-section-header p {
     margin: 10px auto 0;
     color: var(--gsgcl-text-soft);
-    font-size: 1.06rem;
+    font-size: var(--gsgcl-fs-body);
+    line-height: var(--gsgcl-lh-body);
 }
 
 .gsgcl-card-grid {
@@ -357,7 +418,12 @@
 .gsgcl-help-card p,
 .gsgcl-form-card__header p {
     color: var(--gsgcl-text-soft);
-    line-height: 1.7;
+    font-size: var(--gsgcl-fs-body);
+    line-height: var(--gsgcl-lh-body);
+}
+
+.gsgcl-form-card__header p {
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .gsgcl-steps__grid {
@@ -381,12 +447,12 @@
     height: 56px;
     margin-bottom: 18px;
     border-radius: 50%;
-    background: var(--gsgcl-blue);
-    color: #fff;
+    background: var(--gsgcl-yellow);
+    color: var(--gsgcl-blue-deep);
     font-weight: 800;
     font-size: 1.3rem;
-    border: 3px solid var(--gsgcl-yellow);
-    box-shadow: 0 6px 18px rgba(13, 92, 192, 0.22);
+    border: 3px solid var(--gsgcl-blue);
+    box-shadow: 0 6px 18px rgba(13, 92, 192, 0.12);
 }
 
 .gsgcl-form-card {
@@ -609,13 +675,11 @@
     }
 
     .gsgcl-badge--primary {
-        right: 7%;
-        top: 10%;
+        display: none;
     }
 
     .gsgcl-badge--secondary {
-        left: 7%;
-        bottom: 10%;
+        display: none;
     }
 
     .gsgcl-button,
