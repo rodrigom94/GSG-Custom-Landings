@@ -110,6 +110,13 @@ class GSGCL_Section_Library
         wp_register_style('gsgcl-section-admin', false, array(), GSGCL_VERSION);
         wp_enqueue_style('gsgcl-section-admin');
         wp_add_inline_style('gsgcl-section-admin', $this->get_inline_admin_css());
+
+        wp_register_style('gsgcl-section-admin-ui', false, array(), GSGCL_VERSION);
+        wp_enqueue_style('gsgcl-section-admin-ui');
+        wp_add_inline_style(
+            'gsgcl-section-admin-ui',
+            'body.folded #adminmenuback, body.folded #adminmenuwrap, body.folded #adminmenu { width: 30px; } body.folded #wpcontent, body.folded #wpfooter { margin-left: 30px; } body.folded #adminmenu .wp-submenu { left: 30px; }'
+        );
     }
 
     public function render_setup_metabox($post)
@@ -851,7 +858,7 @@ class GSGCL_Section_Library
             <a href="#gsgcl-benefit">Ver beneficio</a>
         </div>
     </div>
-    <div class="gsgcl-demo-hero__visual" style="background-image:url(' . esc_url(GSGCL_URL . 'assets/demo-images/Banner 1800x600 px-100.jpg') . ');"></div>
+    <div class="gsgcl-demo-hero__visual" style="background-image:url(' . esc_url('https://gsgeducation.com/wp-content/uploads/2026/04/Banner-1800x600-px-02.jpg') . ');"></div>
 </section>',
             ),
             array(
@@ -892,10 +899,13 @@ class GSGCL_Section_Library
                 'preview_html' => '
 <section class="gsgcl-section-preview gsgcl-demo-steps">
     <h2>¿Cómo funciona?</h2>
-    <div>
-        <article><strong>1</strong><h3>Recomienda</h3><p>Registra los datos de tu amigo.</p></article>
-        <article><strong>2</strong><h3>Lo contactamos</h3><p>Nuestro equipo le brinda orientación personalizada.</p></article>
-        <article><strong>3</strong><h3>Recibes tu beneficio</h3><p>Si inicia su proceso, activamos tu descuento.</p></article>
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start;">
+        <div style="min-height:360px;border-radius:24px;background:url(&quot;https://gsgeducation.com/wp-content/uploads/2026/04/Banner-collage-estudiantes-celebracion1.png&quot;) center/cover no-repeat;"></div>
+        <div style="display:grid;gap:14px;">
+            <article><strong>1</strong><h3>Recomienda</h3><p>Registra los datos de tu amigo.</p></article>
+            <article><strong>2</strong><h3>Lo contactamos</h3><p>Nuestro equipo le brinda orientación personalizada.</p></article>
+            <article><strong>3</strong><h3>Recibes tu beneficio</h3><p>Si inicia su proceso, activamos tu descuento.</p></article>
+        </div>
     </div>
 </section>',
             ),
@@ -927,12 +937,17 @@ class GSGCL_Section_Library
 <section class="gsgcl-section-preview gsgcl-demo-footer-help">
     <div>
         <h2>¿Por qué referir a GSG Education?</h2>
-        <p>Asesoría especializada, acompañamiento integral, preparación para IELTS y TOEFL y resultados comprobados.</p>
+        <ul>
+            <li>+12 años de experiencia en América Latina.</li>
+            <li>+4000 alumnos aceptados en universidades top a nivel mundial.</li>
+            <li>Convenios con +400 universidades a nivel internacional.</li>
+            <li>Miembros de organizaciones como NAFSA, International ACAC y UCAS.</li>
+        </ul>
     </div>
     <div>
         <h3>¿Tienes dudas?</h3>
-        <a href="https://wa.me/51999999999">Escríbenos por WhatsApp - Perú</a>
-        <a href="https://wa.me/573000000000">Escríbenos por WhatsApp - Colombia</a>
+        <a href="https://conectiontool.mantra.chat/tools/u/accbc76f-7622-44d5-9f71-58963e49a0f2">Escríbenos por WhatsApp - Perú y Latam</a>
+        <a href="https://wa.link/sghvfb">Escríbenos por WhatsApp - Colombia</a>
     </div>
 </section>',
             ),
@@ -1099,6 +1114,26 @@ class GSGCL_Section_Library
         .gsgcl-analysis-box, .gsgcl-card-box { padding: 12px; background: #fff; border: 1px solid #dcdcde; border-radius: 8px; }
         .gsgcl-card-box p { margin: 8px 0; }
         .gsgcl-inline-form { display:grid; gap:8px; margin-top: 12px; }
+        .gsgcl-demo-hero { display:grid; grid-template-columns:minmax(0, 1.05fr) minmax(240px, 0.95fr); gap:20px; align-items:center; }
+        .gsgcl-demo-hero__copy { display:grid; gap:12px; }
+        .gsgcl-demo-hero__copy h1, .gsgcl-demo-hero__copy h2, .gsgcl-demo-hero__copy p { margin:0; }
+        .gsgcl-demo-hero__actions { display:flex; flex-wrap:wrap; gap:10px; }
+        .gsgcl-demo-hero__actions a { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 16px; border-radius:12px; }
+        .gsgcl-demo-hero__visual { min-height:340px; border-radius:20px; background-position:center; background-size:cover; background-repeat:no-repeat; box-shadow:0 14px 30px rgba(16, 61, 146, 0.08); }
+        .gsgcl-demo-counter { display:grid; gap:12px; text-align:center; }
+        .gsgcl-demo-counter__value { display:inline-flex; align-items:center; justify-content:center; margin:0 auto; padding:14px 24px; border-radius:18px; background:linear-gradient(90deg, #0d3e9f, #397dc9); color:#fff; font-weight:800; font-size:clamp(2rem, 6vw, 4rem); }
+        .gsgcl-demo-benefits { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; }
+        .gsgcl-demo-benefits article, .gsgcl-demo-footer-help > div { padding:18px; border:1px solid #dcdcde; border-radius:18px; background:#fff; }
+        .gsgcl-demo-steps { display:grid; gap:16px; }
+        .gsgcl-demo-steps > div { display:grid; grid-template-columns:minmax(240px, 0.95fr) 1.05fr; gap:24px; align-items:start; }
+        .gsgcl-demo-steps > div > div:first-child { min-height:360px; border-radius:24px; background-position:center; background-size:cover; background-repeat:no-repeat; }
+        .gsgcl-demo-steps > div > div:last-child { display:grid; gap:14px; }
+        .gsgcl-demo-steps article { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start; padding:16px 18px; border:1px solid #dcdcde; border-radius:18px; background:#fff; }
+        .gsgcl-demo-steps article strong { display:grid; place-items:center; width:44px; height:44px; border-radius:50%; background:#ffc600; color:#22282b; }
+        .gsgcl-demo-form form { display:grid; gap:12px; }
+        .gsgcl-demo-footer-help { display:grid; grid-template-columns:1.1fr 0.9fr; gap:16px; }
+        .gsgcl-demo-footer-help a { display:flex; width:100%; }
+        @media (max-width: 782px) { .gsgcl-demo-hero, .gsgcl-demo-benefits, .gsgcl-demo-footer-help { grid-template-columns:1fr; } .gsgcl-demo-hero__visual, .gsgcl-demo-steps > div > div:first-child { min-height:240px; background-size:cover; } .gsgcl-demo-steps > div { grid-template-columns:1fr !important; } .gsgcl-demo-hero__actions a, .gsgcl-demo-footer-help a { width:100%; } }
         @media (max-width: 1100px) { .gsgcl-section-editor__grid, .gsgcl-sections-grid { grid-template-columns:1fr; } }
         ';
     }

@@ -37,6 +37,7 @@ class GSGCL_Plugin
 
         add_action('init', array($this, 'register_post_types'));
         add_action('init', array($this, 'register_shortcode'));
+        add_action('rest_api_init', array($this, 'register_rest_routes'));
         add_filter('theme_page_templates', array($this, 'register_dynamic_page_templates'), 20, 4);
         add_filter('template_include', array($this, 'resolve_dynamic_template'), 99);
         add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
@@ -105,11 +106,30 @@ class GSGCL_Plugin
                     'menu_name' => __('Leads GSG', 'gsg-custom-landings'),
                 ),
                 'public' => false,
-                'show_ui' => true,
-                'show_in_menu' => 'edit.php?post_type=gsg_landing',
+                'show_ui' => false,
+                'show_in_menu' => false,
                 'supports' => array('title'),
                 'capability_type' => 'post',
                 'map_meta_cap' => true,
+            )
+        );
+    }
+
+    public function register_rest_routes()
+    {
+        register_rest_route(
+            'gsgcl/v1',
+            '/landings/(?P<landing_id>\d+)/leads',
+            array(
+                'methods' => WP_REST_Server::READABLE,
+                'callback' => array($this, 'rest_export_landing_leads'),
+                'permission_callback' => '__return_true',
+                'args' => array(
+                    'landing_id' => array(
+                        'required' => true,
+                        'sanitize_callback' => 'absint',
+                    ),
+                ),
             )
         );
     }
@@ -225,6 +245,104 @@ class GSGCL_Plugin
         );
     }
 
+    public function get_landing_submissions($landing_id)
+    {
+        global $wpdb;
+
+        $landing_id = absint($landing_id);
+        if (! $landing_id) {
+            return array();
+        }
+
+        $submission_ids = $wpdb->get_col(
+            $wpdb->prepare(
+                "SELECT posts.ID
+                FROM {$wpdb->posts} AS posts
+                INNER JOIN {$wpdb->postmeta} AS meta ON posts.ID = meta.post_id
+                WHERE posts.post_type = %s
+                    AND posts.post_status IN ('private', 'publish')
+                    AND meta.meta_key = %s
+                    AND meta.meta_value = %d
+                ORDER BY posts.post_date DESC, posts.ID DESC",
+                'gsg_submission',
+                'gsgcl_landing_id',
+                $landing_id
+            )
+        );
+
+        if (empty($submission_ids)) {
+            return array();
+        }
+
+        $submissions = array();
+
+        foreach ($submission_ids as $submission_id) {
+            $submission = get_post((int) $submission_id);
+
+            if ($submission instanceof WP_Post) {
+                $submissions[] = $submission;
+            }
+        }
+
+        return $submissions;
+    }
+
+    public function get_submission_export_data($submission)
+    {
+        $submission = get_post($submission);
+
+        if (! $submission instanceof WP_Post || 'gsg_submission' !== $submission->post_type) {
+            return array();
+        }
+
+        $payload = get_post_meta($submission->ID, 'gsgcl_payload', true);
+        $payload = is_array($payload) ? $payload : array();
+
+        $request_context = get_post_meta($submission->ID, 'gsgcl_request_context', true);
+        $request_context = is_array($request_context) ? $request_context : array();
+
+        $raw_meta = $this->get_submission_raw_meta($submission->ID);
+
+        return array(
+            'submission_id' => $submission->ID,
+            'submission_title' => $submission->post_title,
+            'submission_status' => $submission->post_status,
+            'submitted_at' => isset($payload['submitted_at']) && '' !== $payload['submitted_at'] ? $payload['submitted_at'] : $submission->post_date,
+            'submitted_at_gmt' => $submission->post_date_gmt,
+            'landing_id' => absint(get_post_meta($submission->ID, 'gsgcl_landing_id', true)),
+            'page_id' => isset($request_context['page_id']) ? absint($request_context['page_id']) : 0,
+            'payload' => $payload,
+            'request_context' => $request_context,
+            'meta' => array(
+                'gsgcl_openai_enabled' => (string) get_post_meta($submission->ID, 'gsgcl_openai_enabled', true),
+                'gsgcl_openai_context' => (string) get_post_meta($submission->ID, 'gsgcl_openai_context', true),
+            ),
+            'all_data' => array_merge(
+                array(
+                    'submission_id' => $submission->ID,
+                    'submission_title' => $submission->post_title,
+                    'submission_status' => $submission->post_status,
+                    'submitted_at' => isset($payload['submitted_at']) && '' !== $payload['submitted_at'] ? $payload['submitted_at'] : $submission->post_date,
+                    'submitted_at_gmt' => $submission->post_date_gmt,
+                    'landing_id' => absint(get_post_meta($submission->ID, 'gsgcl_landing_id', true)),
+                    'page_id' => isset($request_context['page_id']) ? absint($request_context['page_id']) : 0,
+                ),
+                $payload,
+                $request_context,
+                array(
+                    'gsgcl_openai_enabled' => (string) get_post_meta($submission->ID, 'gsgcl_openai_enabled', true),
+                    'gsgcl_openai_context' => (string) get_post_meta($submission->ID, 'gsgcl_openai_context', true),
+                )
+            ),
+            'raw_meta' => $raw_meta,
+        );
+    }
+
+    public function get_landing_leads_endpoint_url($landing_id)
+    {
+        return rest_url('gsgcl/v1/landings/' . absint($landing_id) . '/leads');
+    }
+
     public function get_template_slug($landing_id)
     {
         return 'gsg-custom-landing-' . absint($landing_id);
@@ -252,6 +370,65 @@ class GSGCL_Plugin
         }
 
         return $value;
+    }
+
+    public function rest_export_landing_leads(WP_REST_Request $request)
+    {
+        $landing_id = absint($request->get_param('landing_id'));
+        $landing = get_post($landing_id);
+
+        if (! $landing instanceof WP_Post || 'gsg_landing' !== $landing->post_type) {
+            return new WP_Error(
+                'gsgcl_rest_invalid_landing',
+                __('La landing solicitada no existe.', 'gsg-custom-landings'),
+                array('status' => 404)
+            );
+        }
+
+        if ('1' !== $this->get_landing_meta($landing_id, 'gsgcl_leads_rest_enabled', '0')) {
+            return new WP_Error(
+                'gsgcl_rest_disabled',
+                __('La exportación REST de leads no está habilitada para esta landing.', 'gsg-custom-landings'),
+                array('status' => 403)
+            );
+        }
+
+        $stored_password = (string) $this->get_landing_meta($landing_id, 'gsgcl_leads_rest_pass', '');
+        if ('' === $stored_password) {
+            return new WP_Error(
+                'gsgcl_rest_missing_password',
+                __('La landing no tiene una contraseña REST configurada.', 'gsg-custom-landings'),
+                array('status' => 500)
+            );
+        }
+
+        $provided_password = $this->extract_rest_password($request);
+        if ('' === $provided_password || ! hash_equals($stored_password, $provided_password)) {
+            return new WP_Error(
+                'gsgcl_rest_invalid_password',
+                __('Contraseña REST inválida.', 'gsg-custom-landings'),
+                array('status' => 401)
+            );
+        }
+
+        $lead_rows = array();
+        foreach ($this->get_landing_submissions($landing_id) as $submission) {
+            $lead_rows[] = $this->get_submission_export_data($submission);
+        }
+
+        return rest_ensure_response(
+            array(
+                'landing' => array(
+                    'id' => $landing_id,
+                    'title' => $landing->post_title,
+                    'status' => $landing->post_status,
+                    'endpoint' => $this->get_landing_leads_endpoint_url($landing_id),
+                ),
+                'generated_at' => current_time('mysql'),
+                'total_leads' => count($lead_rows),
+                'leads' => $lead_rows,
+            )
+        );
     }
 
     public function should_hide_theme_chrome($landing_id)
@@ -364,6 +541,45 @@ class GSGCL_Plugin
         }
 
         return $schema;
+    }
+
+    private function get_submission_raw_meta($submission_id)
+    {
+        $meta = get_post_meta($submission_id);
+        $normalized_meta = array();
+
+        foreach ($meta as $meta_key => $values) {
+            if (! is_array($values)) {
+                $normalized_meta[$meta_key] = maybe_unserialize($values);
+                continue;
+            }
+
+            if (1 === count($values)) {
+                $normalized_meta[$meta_key] = maybe_unserialize($values[0]);
+                continue;
+            }
+
+            $normalized_meta[$meta_key] = array_map('maybe_unserialize', $values);
+        }
+
+        return $normalized_meta;
+    }
+
+    private function extract_rest_password(WP_REST_Request $request)
+    {
+        $header_password = trim((string) $request->get_header('x-gsgcl-pass'));
+        if ('' !== $header_password) {
+            return sanitize_text_field($header_password);
+        }
+
+        $authorization = trim((string) $request->get_header('authorization'));
+        if (preg_match('/^Bearer\s+(.+)$/i', $authorization, $matches)) {
+            return sanitize_text_field($matches[1]);
+        }
+
+        $query_password = $request->get_param('pass');
+
+        return is_scalar($query_password) ? sanitize_text_field((string) $query_password) : '';
     }
 
     private function sanitize_google_font_family($value)

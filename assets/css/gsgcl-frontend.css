@@ -21,6 +21,7 @@ body.gsgcl-page:not(.gsgcl-standalone-template) {
 }
 
 .gsgcl-shell {
+    --gsgcl-font-family: "Poppins", "Segoe UI", sans-serif;
     --gsgcl-brand-blue: #006bcb;
     --gsgcl-blue: #397dc9;
     --gsgcl-blue-deep: #0d3e9f;
@@ -39,10 +40,10 @@ body.gsgcl-page:not(.gsgcl-standalone-template) {
 
     /* ── Design-system typography tokens ─────────────────── */
     --gsgcl-fs-h1: clamp(2rem, 4.5vw, 2.9rem);
-    --gsgcl-fw-h1: 600;
+    --gsgcl-fw-h1: 800;
     --gsgcl-lh-h1: 1.1;
     --gsgcl-fs-h2: clamp(1.5rem, 3.5vw, 2rem);
-    --gsgcl-fw-h2: 500;
+    --gsgcl-fw-h2: 800;
     --gsgcl-lh-h2: 1.2;
     --gsgcl-fs-h3: 1.125rem;
     --gsgcl-fw-h3: 600;
@@ -80,28 +81,33 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
     font-size: var(--gsgcl-fs-h1);
     font-weight: var(--gsgcl-fw-h1);
     line-height: var(--gsgcl-lh-h1);
+    font-family: Poppins;
 }
 
 .gsgcl-shell h2 {
     font-size: var(--gsgcl-fs-h2);
     font-weight: var(--gsgcl-fw-h2);
     line-height: var(--gsgcl-lh-h2);
+    font-family: Poppins;
 }
 
 .gsgcl-shell h3 {
     font-size: var(--gsgcl-fs-h3);
     font-weight: var(--gsgcl-fw-h3);
     line-height: var(--gsgcl-lh-h3);
+    font-family: Poppins;
 }
 
 .gsgcl-shell h4 {
     font-size: var(--gsgcl-fs-h4);
     font-weight: var(--gsgcl-fw-h4);
     line-height: var(--gsgcl-lh-h4);
+    font-family: Poppins;
 }
 
 .gsgcl-shell p,
 .gsgcl-shell li {
+    color: #000;
     font-size: var(--gsgcl-fs-body);
     font-weight: var(--gsgcl-fw-body);
     line-height: var(--gsgcl-lh-body);
@@ -133,6 +139,13 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
     margin: 0 auto;
 }
 
+.kizen-main,
+.kizen-page {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+}
+
 .gsgcl-hero {
     padding: 0;
     margin-bottom: 10px;
@@ -146,21 +159,27 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
 
 .gsgcl-hero__grid {
     display: grid;
-    grid-template-columns: 0.7fr 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0;
     overflow: hidden;
     box-shadow: var(--gsgcl-shadow);
     background: var(--gsgcl-surface);
     width: min(100%, 1200px);
     margin: 0 auto;
+    position: relative;
 }
 
 .gsgcl-hero__content {
+    grid-area: 1 / 1;
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 20px;
-    background: var(--gsgcl-brand-blue);
+    width: min(54%, 790px);
+    min-width: 490px;
+    min-height: 430px;
     color: #fff;
     padding: 52px clamp(48px, 6vw, 96px);
 }
@@ -168,18 +187,21 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
 .gsgcl-hero__title {
     margin: 0;
     font-size: var(--gsgcl-fs-h1);
-    font-weight: var(--gsgcl-fw-h1);
+    font-weight: 800;
     line-height: var(--gsgcl-lh-h1);
+    max-width: 16ch;
 }
 
 .gsgcl-hero__title span {
-    display: block;
+    display: inline;
     color: var(--gsgcl-yellow);
+    font-weight: 800;
 }
 
 .gsgcl-hero__description {
     margin: 0;
     max-width: 30rem;
+    color: #fff !important;
     font-size: var(--gsgcl-fs-body);
     line-height: var(--gsgcl-lh-body);
 }
@@ -272,6 +294,7 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
 }
 
 .gsgcl-hero__visual {
+    grid-area: 1 / 1;
     position: relative;
     min-height: 430px;
     background: linear-gradient(135deg, rgba(57, 125, 201, 0.18), rgba(171, 227, 228, 0.18));
@@ -284,9 +307,19 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
     background-position: center;
 }
 
+.gsgcl-hero__picture,
+.gsgcl-hero__img {
+    display: none;
+}
+
+.gsgcl-hero__picture {
+    position: absolute;
+    inset: 0;
+}
+
 .gsgcl-hero__image--demo-banner {
-    background-image: url("../demo-images/Banner 1800x600 px-100.jpg") !important;
-    background-position: center right;
+    background-image: url("https://gsgeducation.com/wp-content/uploads/2026/04/Banner-1800x600-px-02.jpg") !important;
+    background-position: center center;
 }
 
 .gsgcl-hero__visual::after {
@@ -331,10 +364,10 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
 .gsgcl-benefit--counter-only::after {
     content: "";
     position: absolute;
-    right: -7%;
+    right: -14%;
     top: 18%;
-    width: 420px;
-    height: 420px;
+    width: 570px;
+    height: 570px;
     background: url("../demo-images/Aro amarillo@2x.png") center/contain no-repeat;
     opacity: 0.95;
     pointer-events: none;
@@ -379,7 +412,7 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
 }
 
 .gsgcl-section-preview p {
-    color: var(--gsgcl-text-soft);
+    color: #000;
     line-height: 1.7;
 }
 
@@ -413,8 +446,8 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
 
 .gsgcl-section-header {
     text-align: center;
-    max-width: 760px;
-    margin: 0 auto 30px;
+    /* max-width: 760px; */
+    /* margin: 0 auto 30px; */
 }
 
 .gsgcl-section-header h2 {
@@ -427,12 +460,12 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
 .gsgcl-offer {
     display: inline-block;
     margin: 16px 0 10px;
-    padding: 20px 44px;
+    padding: 4px 24px;
     background: linear-gradient(135deg, var(--gsgcl-blue), var(--gsgcl-blue-deep));
     color: #fff;
-    font-weight: 700;
-    font-size: clamp(2.8rem, 6vw, 4.2rem);
-    border-radius: 16px;
+    font-weight: 800;
+    font-size: clamp(2.8rem, 6vw, 5.2rem);
+    border-radius: 0;
 }
 
 .gsgcl-section-header h3 {
@@ -444,9 +477,13 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
 
 .gsgcl-section-header p {
     margin: 10px auto 0;
-    color: var(--gsgcl-text-soft);
+    color: #000;
     font-size: var(--gsgcl-fs-body);
     line-height: var(--gsgcl-lh-body);
+}
+
+.gsgcl-benefit--counter-only .gsgcl-section-header > p {
+    margin-bottom: 40px;
 }
 
 .gsgcl-card-grid {
@@ -459,49 +496,54 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
 
 .gsgcl-card {
     position: relative;
-    padding: 30px;
+    padding: 30px 30px 30px 30px;
     background: rgba(255, 255, 255, 0.96);
     border: 2px solid rgba(13, 92, 192, 0.28);
     border-radius: 22px;
     box-shadow: 0 14px 38px rgba(16, 61, 146, 0.08);
 }
 
+.gsgcl-benefit--cards-only .gsgcl-card {
+    border: 1px solid var(--gsgcl-blue);
+}
+
 .gsgcl-card__icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     margin-bottom: 16px;
+    background: rgba(13, 92, 192, 0.14);
 }
 
 .gsgcl-card__icon--person {
-    background: rgba(13, 92, 192, 0.13);
+    background: rgba(13, 92, 192, 0.14);
 }
 
 .gsgcl-card__icon--person::after {
     content: "";
     display: block;
-    width: 24px;
-    height: 24px;
+    width: 36px;
+    height: 36px;
     background-color: var(--gsgcl-blue);
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z'/%3E%3C/svg%3E") center/contain no-repeat;
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z'/%3E%3C/svg%3E") center/contain no-repeat;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-6 9c0-3.314 2.686-6 6-6s6 2.686 6 6H4Zm14-10V7h2v3h3v2h-3v3h-2v-3h-3v-2h3Z'/%3E%3C/svg%3E") center/contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-6 9c0-3.314 2.686-6 6-6s6 2.686 6 6H4Zm14-10V7h2v3h3v2h-3v3h-2v-3h-3v-2h3Z'/%3E%3C/svg%3E") center/contain no-repeat;
 }
 
 .gsgcl-card__icon--gift {
-    background: rgba(255, 193, 7, 0.16);
+    background: rgba(13, 92, 192, 0.14);
 }
 
 .gsgcl-card__icon--gift::after {
     content: "";
     display: block;
-    width: 24px;
-    height: 24px;
-    background-color: #d4940a;
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E") center/contain no-repeat;
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E") center/contain no-repeat;
+    width: 34px;
+    height: 34px;
+    background-color: var(--gsgcl-blue);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12Zm0 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm-4.3 9.2L4 16l2.2 4L9 18.5 12 22l3-3.5 2.8 1.5L20 16l-3.7-1.8A7.84 7.84 0 0 1 12 15c-1.53 0-2.96-.3-4.3-.8Z'/%3E%3C/svg%3E") center/contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12Zm0 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm-4.3 9.2L4 16l2.2 4L9 18.5 12 22l3-3.5 2.8 1.5L20 16l-3.7-1.8A7.84 7.84 0 0 1 12 15c-1.53 0-2.96-.3-4.3-.8Z'/%3E%3C/svg%3E") center/contain no-repeat;
 }
 
 .gsgcl-card h4,
@@ -520,13 +562,17 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
 .gsgcl-reasons li,
 .gsgcl-help-card p,
 .gsgcl-form-card__header p {
-    color: var(--gsgcl-text-soft);
+    color: #000;
     font-size: var(--gsgcl-fs-body);
     line-height: var(--gsgcl-lh-body);
 }
 
 .gsgcl-form-card__header p {
-    color: rgba(255, 255, 255, 0.9);
+    color: #fff;
+}
+
+.gsgcl-form-card__header > p {
+    margin: 0;
 }
 
 .gsgcl-steps__grid {
@@ -537,26 +583,67 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
     z-index: 1;
 }
 
+.gsgcl-steps__layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.05fr);
+    gap: 34px;
+    align-items: start;
+    position: relative;
+    z-index: 1;
+}
+
+.gsgcl-steps__visual {
+    min-height: 620px;
+    border-radius: 30px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.gsgcl-steps__cards {
+    display: grid;
+    gap: 20px;
+}
+
+.gsgcl-steps__header {
+    text-align: left;
+    margin-bottom: 4px;
+}
+
 .gsgcl-step {
-    padding: 28px 24px;
-    text-align: center;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+    padding: 38px 28px;
+    text-align: left;
     background: rgba(255, 255, 255, 0.94);
     border-radius: 22px;
     box-shadow: 0 14px 30px rgba(16, 61, 146, 0.07);
 }
 
 .gsgcl-step__number {
-    display: inline-grid;
+    display: grid;
     place-items: center;
     width: 56px;
     height: 56px;
-    margin-bottom: 18px;
+    margin-top: 2px;
     border-radius: 50%;
     background: var(--gsgcl-yellow);
     color: var(--gsgcl-gray-dark);
     font-weight: 800;
     font-size: 1.3rem;
     box-shadow: 0 6px 18px rgba(13, 92, 192, 0.12);
+}
+
+.gsgcl-step__copy {
+    display: grid;
+    gap: 8px;
+}
+
+.gsgcl-step > p,
+.gsgcl-step__copy > p {
+    margin: 0;
 }
 
 .gsgcl-form-card {
@@ -652,8 +739,38 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
     color: #fff !important;
 }
 
+.gsgcl-shell button.gsgcl-button--accent.gsgcl-button--submit,
+.gsgcl-shell button.gsgcl-button--accent.gsgcl-button--submit:hover,
+.gsgcl-shell button.gsgcl-button--accent.gsgcl-button--submit:focus,
+.gsgcl-shell button.gsgcl-button--accent.gsgcl-button--submit:active {
+    background: var(--gsgcl-yellow) !important;
+    background-color: var(--gsgcl-yellow) !important;
+    color: #000 !important;
+}
+
+.gsgcl-button--submit:disabled,
+.gsgcl-button--submit[aria-busy="true"] {
+    opacity: 0.7;
+    cursor: wait;
+    pointer-events: none;
+}
+
 .gsgcl-field-grid__full {
     grid-column: 1 / -1;
+}
+
+.gsgcl-phone-field {
+    display: grid;
+    grid-template-columns: 55px minmax(0, 1fr);
+    gap: 4px;
+}
+
+.gsgcl-phone-field__prefix {
+    text-align: left;
+    color: var(--gsgcl-blue-deep);
+    background: rgba(13, 92, 192, 0.08);
+    cursor: default;
+    padding: 5px 7px !important;
 }
 
 .gsgcl-form .gsgcl-field-grid input,
@@ -738,21 +855,23 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
 }
 
 .gsgcl-reasons::before {
-    top: -168px;
-    left: -146px;
-    width: 430px;
-    height: 430px;
+    top: -336px;
+    left: -292px;
+        width: 630px;
+        height: 630px;
     border-radius: 50%;
-    background: radial-gradient(circle, transparent 0 42%, rgba(123, 182, 244, 0.36) 42.5% 58%, transparent 58.5%);
+        background: url(https://gsgeducation.com/wp-content/uploads/2026/04/Aro-cyan@2x.png) center / contain no-repeat;
+        opacity: 1;
 }
 
 .gsgcl-reasons::after {
-    right: -154px;
-    bottom: -190px;
-    width: 510px;
-    height: 510px;
+    right: -258px;
+    top: 200px;
+    width: 420px;
+    height: 420px;
     border-radius: 50%;
-    background: radial-gradient(circle, transparent 0 38%, rgba(97, 155, 229, 0.3) 38.5% 53%, transparent 53.5%);
+    background: url(https://gsgeducation.com/wp-content/uploads/2026/04/Aro-cyan@2x.png) center / contain no-repeat;
+    opacity: 0.15;
 }
 
 .gsgcl-reasons__panel,
@@ -760,6 +879,9 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
     padding: 34px 32px;
     border-radius: 24px;
     color: #fff;
+}
+
+.gsgcl-help-card {
     background: var(--gsgcl-brand-blue);
     box-shadow: var(--gsgcl-shadow);
 }
@@ -817,12 +939,30 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
     .gsgcl-reasons__grid,
     .gsgcl-form__grid,
     .gsgcl-card-grid,
-    .gsgcl-steps__grid {
+    .gsgcl-steps__grid,
+    .gsgcl-steps__layout {
         grid-template-columns: 1fr;
     }
 
     .gsgcl-hero__visual {
         min-height: 360px;
+    }
+
+    .gsgcl-hero__content,
+    .gsgcl-hero__visual {
+        grid-area: auto;
+    }
+
+    .gsgcl-hero__content {
+        width: 100%;
+        min-width: 0;
+        min-height: 0;
+        background: var(--gsgcl-brand-blue);
+        padding: 44px clamp(32px, 5vw, 56px);
+    }
+
+    .gsgcl-hero__title {
+        max-width: none;
     }
 
     .gsgcl-benefit::after {
@@ -839,15 +979,64 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
         top: -2%;
     }
 
+    .gsgcl-steps__visual {
+        min-height: 420px;
+        order: 1;
+    }
+
+    .gsgcl-steps__cards {
+        order: 2;
+    }
+
     .gsgcl-field-grid {
         grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 900px) {
+    .gsgcl-hero__visual {
+        min-height: 0;
+    }
+
     .gsgcl-hero__image--demo-banner {
-        background-image: url("../demo-images/Banner 800x1000px-100.jpg") !important;
-        background-position: center top;
+        position: relative;
+        inset: auto;
+        margin-top: -30px;
+    }
+
+    .gsgcl-hero__image--demo-banner {
+        background-image: none !important;
+    }
+
+    .gsgcl-hero__picture,
+    .gsgcl-hero__img {
+        display: block;
+    }
+
+    .gsgcl-hero__picture {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    .gsgcl-hero__img {
+        position: relative;
+        width: 100%;
+        height: auto;
+        object-fit: fill;
+    }
+}
+
+@media (max-width: 640px) {
+
+    .gsgcl-hero__content {
+        background: #2c71b2;
+        padding: 44px clamp(32px, 5vw, 56px) 15px;
+    }
+
+    .gsgcl-wrap {
+        position: relative;
+        z-index: 9999999999;
     }
 
     .gsgcl-wrap {
@@ -879,9 +1068,25 @@ body.gsgcl-page:not(.gsgcl-standalone-template) .gsgcl-shell {
     .gsgcl-benefit::after {
         width: 220px;
         height: 220px;
-        right: -14%;
-        top: 28%;
-        opacity: 0.9;
+        right: -34%;
+        top: 48%;
+        opacity: 0.8;
+    }
+
+    .gsgcl-reasons::before {
+        width: 420px;
+        height: 420px;
+        top: -160px;
+        left: -180px;
+        opacity: 0.16;
+    }
+
+    .gsgcl-reasons::after {
+        width: 520px;
+        height: 520px;
+        right: -240px;
+        bottom: -260px;
+        opacity: 0.14;
     }
 
     .gsgcl-steps::before {

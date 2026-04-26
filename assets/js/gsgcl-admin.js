@@ -94,11 +94,45 @@
         return $(document.body);
     }
 
+    function activateAdminTab($button) {
+        var $root = $button.closest('.gsgcl-tabbed-panel');
+        var targetId = $button.data('tabTarget');
+
+        if (!$root.length || !targetId) {
+            return;
+        }
+
+        $root.find('.gsgcl-admin-tab').removeClass('is-active').attr('aria-selected', 'false').attr('tabindex', '-1');
+        $button.addClass('is-active').attr('aria-selected', 'true').attr('tabindex', '0');
+
+        $root.find('.gsgcl-admin-tabpanel').removeClass('is-active').attr('hidden', 'hidden');
+        $root.find('#' + targetId).addClass('is-active').removeAttr('hidden');
+    }
+
     function buildInlineEditorCard(payload) {
         return $(payload.editor_html || '');
     }
 
     $(function () {
+        var $tabbedPanels = $('.gsgcl-tabbed-panel');
+        if ($tabbedPanels.length) {
+            $tabbedPanels.each(function () {
+                var $root = $(this);
+                var defaultTab = $root.data('defaultTab');
+                var $defaultButton = defaultTab
+                    ? $root.find('.gsgcl-admin-tab[data-tab-target="' + defaultTab + '"]').first()
+                    : $root.find('.gsgcl-admin-tab').first();
+
+                if ($defaultButton.length) {
+                    activateAdminTab($defaultButton);
+                }
+            });
+
+            $(document).on('click', '.gsgcl-admin-tab', function () {
+                activateAdminTab($(this));
+            });
+        }
+
         var $landingSections = $('.gsgcl-landing-sections');
         if ($landingSections.length) {
             $landingSections.each(function () {
